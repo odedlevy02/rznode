@@ -1,0 +1,9 @@
+{
+  "name": "<%=projnameLower%>",
+  "version": "0.0.1",
+  "scripts": {
+    "npm:install": "npm install",
+    "tsc:compile": "tsc",
+    "build": "npm run npm:install && npm run tsc:compile"
+  }
+}

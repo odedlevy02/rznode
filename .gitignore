@@ -1,0 +1,8 @@
+node_modules
+coverage
+*.js
+*.orig
+*.js.map
+npm-debug.log
+.idea
+.idea/*

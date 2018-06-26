@@ -1,0 +1,9 @@
+{
+  "generator-node": {
+    "promptValues": {
+      "authorName": "Oded Levy",
+      "authorEmail": "odedlevy02@gmail.com",
+      "authorUrl": ""
+    }
+  }
+}
