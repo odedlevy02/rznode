@@ -24,8 +24,7 @@ yo rznode
 > When using the generator to generate a new route it is required to manually add the exported router method from the generated route
 > file into the server.ts inside method: setRoutes()
 
-### Logs
-The logger supports 
+
 
 
 MIT License © [Oded Levy]()

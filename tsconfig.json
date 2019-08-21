@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "commonjs",
-    "noEmitOnError": true,
-    "noImplicitAny": false,
-    "experimentalDecorators": true,
-    "sourceMap": true
+      "target": "ES2017",
+      "lib": [
+          "es2017",
+          "dom"
+      ],
+      "module": "commonjs",
+      "noEmitOnError": true,
+      "noImplicitAny": false,
+      "experimentalDecorators": true,
+      "sourceMap": true
   }
 }
