@@ -1,0 +1,14 @@
+{
+    "swagger": "2.0",
+    "info": {
+           "version": "1.0.0",
+           "title": "App Title",
+           "description": "App desc"
+           },
+    "schemes": [
+           "http",
+           "https"
+    ],
+    "paths": {
+    }
+}

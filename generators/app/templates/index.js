@@ -12,5 +12,6 @@ const server = new Server();
 
 server.setRoutes();
 server.setStaticFolders();
+server.setSwagger();
 server.setErrorHandlers();
 server.startServer();

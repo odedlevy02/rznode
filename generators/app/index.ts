@@ -15,7 +15,8 @@ module.exports = class extends Generator {
         choices: [
           { name: "New Node service", value: "nodeservice" },
           { name: "Express router", value: "noderoute" },
-          { name: "Unit test", value: "unittest" }
+          { name: "Unit test", value: "unittest" },
+          { name: "Add Swagger", value: "swagger" }
         ]
       }, {
         when: (response => {
@@ -57,7 +58,10 @@ module.exports = class extends Generator {
     } else if ((<any>this).props.gentype == "unittest") {
       this._generateUnitTest();
       this._installUnitTestDependencies();
-    } 
+    } else if ((<any>this).props.gentype == "swagger") {
+      this._generateSwaggerFile();
+      this._installSwagggerDependencies();
+    }
   }
 
   _capitalize(s) {
@@ -88,7 +92,7 @@ module.exports = class extends Generator {
       this.destinationPath(`${projnameLower}/config/.env`));
     this.fs.copyTpl(
       this.templatePath(`Dockerfile`),
-      this.destinationPath(`${projnameLower}/Dockerfile`),{
+      this.destinationPath(`${projnameLower}/Dockerfile`), {
         projnameLower
       });
     this.fs.copy(
@@ -119,10 +123,18 @@ module.exports = class extends Generator {
     }
     this.fs.copyTpl(
       this.templatePath(`unittest.js`),
-      this.destinationPath(`test/${testName}.ts`),{
+      this.destinationPath(`test/${testName}.ts`), {
         origTestName
       });
 
+  }
+
+  _generateSwaggerFile(){
+    this.fs.copy(
+      this.templatePath(`_swagger.json`),
+      this.destinationPath(`swagger.json`));
+    yosay("yosay done");
+    console.log("console done");
   }
 
   _installDepencies() {
@@ -139,5 +151,9 @@ module.exports = class extends Generator {
   _installUnitTestDependencies() {
     this.npmInstall(["chai", "mocha", "sinon", "@types/mocha"], { "save-dev": true })
   }
- 
+
+  _installSwagggerDependencies(){
+    this.npmInstall(["swagger-ui-express"]);
+  }
+
 };
