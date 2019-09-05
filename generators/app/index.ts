@@ -14,7 +14,7 @@ module.exports = class extends Generator {
         message: 'What would you like to generate',
         choices: [
           { name: "New Node service", value: "nodeservice" },
-          { name: "Express router", value: "noderoute" },
+          { name: "New Module (router and service)", value: "module" },
           { name: "Unit test", value: "unittest" },
           { name: "Add Swagger", value: "swagger" }
         ]
@@ -27,11 +27,11 @@ module.exports = class extends Generator {
         message: "What is the name of your new node service?"
       }, {
         when: (response => {
-          return response.gentype == "noderoute"
+          return response.gentype == "module"
         }),
         type: "input",
-        name: "routename",
-        message: "What is name of the new route?"
+        name: "modulename",
+        message: "What is name of the new module?"
       }, {
         when: (response => {
           return response.gentype == "unittest"
@@ -53,8 +53,8 @@ module.exports = class extends Generator {
 
       this._generateNodeFiles();
       this._installDepencies();
-    } else if ((<any>this).props.gentype == "noderoute") {
-      this._generateRouter();
+    } else if ((<any>this).props.gentype == "module") {
+      this._generateModule();
     } else if ((<any>this).props.gentype == "unittest") {
       this._generateUnitTest();
       this._installUnitTestDependencies();
@@ -105,13 +105,18 @@ module.exports = class extends Generator {
       });
   }
 
-  _generateRouter() {
-    let routename = this._capitalize((<any>this).props.routename);
-    let routenameLower = this._deCaptilize((<any>this).props.routename)
+  _generateModule() {
+    let modulename = this._capitalize((<any>this).props.modulename);
+    let modulenameLower = this._deCaptilize((<any>this).props.modulename)
     this.fs.copyTpl(
       this.templatePath(`router.js`),
-      this.destinationPath(`routes/${routenameLower}Router.ts`), {
-        routename, routenameLower
+      this.destinationPath(`${modulenameLower}/${modulenameLower}.router.ts`), {
+        modulename, modulenameLower
+      });
+    this.fs.copyTpl(
+      this.templatePath(`service.js`),
+      this.destinationPath(`${modulenameLower}/${modulenameLower}.service.ts`), {
+        modulename, modulenameLower
       });
   }
 
@@ -129,7 +134,7 @@ module.exports = class extends Generator {
 
   }
 
-  _generateSwaggerFile(){
+  _generateSwaggerFile() {
     this.fs.copy(
       this.templatePath(`_swagger.json`),
       this.destinationPath(`swagger.json`));
@@ -152,7 +157,7 @@ module.exports = class extends Generator {
     this.npmInstall(["chai", "mocha", "sinon", "@types/mocha"], { "save-dev": true })
   }
 
-  _installSwagggerDependencies(){
+  _installSwagggerDependencies() {
     this.npmInstall(["swagger-ui-express"]);
   }
 

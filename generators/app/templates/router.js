@@ -1,6 +1,8 @@
 import {Router} from "express";
 import * as express from "express";
-class <%=routename%>Router{
+import {<%=modulename%>Service} from "./<%=modulenameLower%>.service" 
+
+class <%=modulename%>Router{
 
   router: Router;
 
@@ -18,5 +20,5 @@ class <%=routename%>Router{
   }
 }
 
-export const <%=routenameLower%>Router= new <%=routename%>Router().router;
-//Note - add to server.ts method setRoutes:  this.app.use("/<%=routenameLower%>",<%=routenameLower%>Router);
+export const <%=modulenameLower%>Router= new <%=modulename%>Router().router;
+//Note - add to server.ts method setRoutes:  this.app.use("/<%=modulenameLower%>",<%=modulenameLower%>Router);
