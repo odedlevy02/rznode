@@ -4,7 +4,7 @@ import * as fs from "fs"
 const chalk = require('chalk');
 const yosay = require('yosay');
 //camelCase: someParamName, pascalCase: SomeParamName, paramCase: some-param-name, snakeCase: some_param_name
-import { camelCase, paramCase, pascalCase, camel } from 'change-case'
+import { camelCase, paramCase, pascalCase, sentenceCase } from 'change-case'
 
 module.exports = class extends Generator {
   prompting() {
@@ -17,8 +17,7 @@ module.exports = class extends Generator {
         choices: [
           { name: "New Node service", value: "nodeservice" },
           { name: "New Module (router and service)", value: "module" },
-          { name: "Unit test", value: "unittest" },
-          { name: "Add Swagger", value: "swagger" }
+          { name: "Unit test", value: "unittest" }
         ]
       }, {
         when: (response => {
@@ -52,7 +51,6 @@ module.exports = class extends Generator {
 
   writing() {
     if ((<any>this).props.gentype == "nodeservice") {
-
       this._generateNodeFiles();
       this._installDepencies();
     } else if ((<any>this).props.gentype == "module") {
@@ -60,9 +58,6 @@ module.exports = class extends Generator {
     } else if ((<any>this).props.gentype == "unittest") {
       this._generateUnitTest();
       this._installUnitTestDependencies();
-    } else if ((<any>this).props.gentype == "swagger") {
-      this._generateSwaggerFile();
-      this._installSwagggerDependencies();
     }
   }
 
@@ -104,6 +99,11 @@ module.exports = class extends Generator {
       this.templatePath(`.dockerignore`),
       this.destinationPath(`${projnameLower}/.dockerignore`));
     this.fs.copyTpl(
+      this.templatePath(`_swagger.json`),
+      this.destinationPath(`${projnameLower}/swagger.json`), {
+        header:sentenceCase(projnameLower)
+      });
+    this.fs.copyTpl(
       this.templatePath(`_package.json`),
       this.destinationPath(`${projnameLower}/package.json`), {
         projnameLower
@@ -139,14 +139,6 @@ module.exports = class extends Generator {
 
   }
 
-  _generateSwaggerFile() {
-    this.fs.copy(
-      this.templatePath(`_swagger.json`),
-      this.destinationPath(`swagger.json`));
-    yosay("yosay done");
-    console.log("console done");
-  }
-
   _installDepencies() {
 
     let projnameLower = this._getProjNameLower()
@@ -154,16 +146,12 @@ module.exports = class extends Generator {
     fs.mkdirSync(newprojLocation)
     //change the working directory before install so that npm will find the package.json file created and add node modules in correct location
     process.chdir(newprojLocation);
-    this.npmInstall(["body-parser", "compression", "dotenv", "express", "dotenv-display"], { save: true })
+    this.npmInstall(["body-parser", "compression", "dotenv", "express", "dotenv-display","swagger-ui-express"], { save: true })
     this.npmInstall(["@types/dotenv", "@types/express", "@types/node"], { "save-dev": true })
   }
 
   _installUnitTestDependencies() {
     this.npmInstall(["chai", "mocha", "sinon", "@types/mocha"], { "save-dev": true })
   }
-
-  _installSwagggerDependencies() {
-    this.npmInstall(["swagger-ui-express"]);
-  }
-
+  
 };

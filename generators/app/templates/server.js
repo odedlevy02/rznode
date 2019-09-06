@@ -2,7 +2,7 @@ import * as express from "express";
 import * as http from "http";
 import * as bodyParser from "body-parser"
 import * as compression from "compression"
-//import * as swaggerUi from "swagger-ui-express"
+import * as swaggerUi from "swagger-ui-express"
 
 export class Server{
   private app:express.Express;
@@ -38,9 +38,9 @@ export class Server{
   }
 
   public setSwagger=()=>{
-    // let swaggerDocument = require('./swagger.json');
-    // this.app.use('/explorer', swaggerUi.serve, swaggerUi.setup(swaggerDocument,{"showExplorer": true}));
-    // console.log(`For exploring the apis open: http://localhost:${this.port}/explorer`)
+    let swaggerDocument = require('./swagger.json');
+    this.app.use('/explorer', swaggerUi.serve, swaggerUi.setup(swaggerDocument,{"showExplorer": true}));
+    console.log(`For exploring the apis open: http://localhost:${this.port}/explorer`)
   }
 
   private onServerListen=()=>{

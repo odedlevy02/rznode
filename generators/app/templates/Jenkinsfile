@@ -3,8 +3,8 @@ node {
     stage('deploy') {
         checkout scm
         //set these params before executing
-        //repo -twe provider repoistory prefix. Make sure to login into jenkins and configure you credentials
-        //for aws run : aws configure
+        //repo -the provider repoistory prefix. Make sure to login into jenkins and configure your cloud credentials
+        //e.g for aws run : aws configure
         //VERSION - the image version
         //SERVICE_ROOT - the path to your node service from the git root
         withEnv([
