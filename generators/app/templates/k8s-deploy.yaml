@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: <%=projnameParamCase%>-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: <%=projnameParamCase%>
+    spec:
+      containers:
+      - image: <repo name>/<%=projnameParamCase%>
+        # env:
+        # - name: ENV_NAME
+        #   value: env_value
+        name: <%=projnameParamCase%>
+        ports:
+         - containerPort: 3000
+        livenessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 40
+            timeoutSeconds: 4  
+        resources:
+          requests:
+            cpu: 500m # min cpu usage - important for limiting num pods in single machine
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30  #gracefull shutdown
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: <%=projnameParamCase%>
+spec:
+  type: LoadBalancer
+  selector:
+    app: <%=projnameParamCase%>
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+

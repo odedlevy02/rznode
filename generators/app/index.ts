@@ -3,6 +3,8 @@ import * as path from "path"
 import * as fs from "fs"
 const chalk = require('chalk');
 const yosay = require('yosay');
+//camelCase: someParamName, pascalCase: SomeParamName, paramCase: some-param-name, snakeCase: some_param_name
+import { camelCase, paramCase, pascalCase, camel } from 'change-case'
 
 module.exports = class extends Generator {
   prompting() {
@@ -64,20 +66,13 @@ module.exports = class extends Generator {
     }
   }
 
-  _capitalize(s) {
-    return s[0].toUpperCase() + s.slice(1);
-  }
-
-  _deCaptilize(s) {
-    return s[0].toLowerCase() + s.slice(1);
-  }
-
   _getProjNameLower() {
-    return this._deCaptilize((<any>this).props.projname);
+    return camelCase((<any>this).props.projname);
   }
 
   _generateNodeFiles() {
     let projnameLower = this._getProjNameLower()
+    let projnameParamCase = paramCase(projnameLower)
     this.fs.copy(
       this.templatePath(`index.js`),
       this.destinationPath(`${projnameLower}/index.ts`));
@@ -95,6 +90,16 @@ module.exports = class extends Generator {
       this.destinationPath(`${projnameLower}/Dockerfile`), {
         projnameLower
       });
+    this.fs.copyTpl(
+      this.templatePath(`Jenkinsfile`),
+      this.destinationPath(`${projnameLower}/Jenkinsfile`), {
+        projnameLower, projnameParamCase
+      });
+    this.fs.copyTpl(
+      this.templatePath(`k8s-deploy.yaml`),
+      this.destinationPath(`${projnameLower}/${projnameParamCase}-k8s-deploy.yaml`), {
+        projnameParamCase
+      });
     this.fs.copy(
       this.templatePath(`.dockerignore`),
       this.destinationPath(`${projnameLower}/.dockerignore`));
@@ -106,8 +111,8 @@ module.exports = class extends Generator {
   }
 
   _generateModule() {
-    let modulename = this._capitalize((<any>this).props.modulename);
-    let modulenameLower = this._deCaptilize((<any>this).props.modulename)
+    let modulename = pascalCase((<any>this).props.modulename); // FirstLetterCapital
+    let modulenameLower = camelCase((<any>this).props.modulename) //firstLetterLowerCase
     this.fs.copyTpl(
       this.templatePath(`router.js`),
       this.destinationPath(`${modulenameLower}/${modulenameLower}.router.ts`), {

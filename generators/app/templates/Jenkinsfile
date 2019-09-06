@@ -1,0 +1,38 @@
+
+node {
+    stage('deploy') {
+        checkout scm
+        //set these params before executing
+        //repo -twe provider repoistory prefix. Make sure to login into jenkins and configure you credentials
+        //for aws run : aws configure
+        //VERSION - the image version
+        //SERVICE_ROOT - the path to your node service from the git root
+        withEnv([
+            "REPO=your-aws-id.dkr.ecr.eu-central-1.amazonaws.com",
+            "VERSION=latest",
+            "SERVICE_ROOT=servers"]){
+
+            def path="${SERVICE_ROOT}/<%=projnameLower%>"
+            dir (path) {
+                stage('build service') {
+                    sh "npm install"
+                    sh "tsc"
+                }
+                stage('test service') {
+                    sh "npm test"
+                }
+                stage("build docker image"){
+                    sh 'docker build -t ${REPO}/<%=projnameParamCase%>:${VERSION} .'
+                }
+                stage("build docker image2"){
+                    sh 'docker build -t ${REPO}/<%=projnameParamCase%> .'
+                }
+                stage("Push docker image"){
+                    //relevant for aws
+                    sh 'eval \$(aws ecr get-login --no-include-email )' 
+                    sh 'docker push ${REPO}/<%=projnameParamCase%>:${VERSION}'
+                }
+            }
+        }
+    }
+}
