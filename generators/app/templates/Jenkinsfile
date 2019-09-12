@@ -24,9 +24,6 @@ node {
                 stage("build docker image"){
                     sh 'docker build -t ${REPO}/<%=projnameParamCase%>:${VERSION} .'
                 }
-                stage("build docker image2"){
-                    sh 'docker build -t ${REPO}/<%=projnameParamCase%> .'
-                }
                 stage("Push docker image"){
                     //relevant for aws
                     sh 'eval \$(aws ecr get-login --no-include-email )' 
