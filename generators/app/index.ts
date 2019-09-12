@@ -63,7 +63,7 @@ module.exports = class extends Generator {
         }),
         type: "confirm",
         name: "confirm",
-        message: "Make sure to run from your root directory containing a 'servers' and 'clients' folder. Continue?"
+        message: "Make sure to run from your root directory containing a folder for servers and client apps. Continue?"
       }
     ];
 

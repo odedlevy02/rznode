@@ -1,6 +1,5 @@
 import { existsSync, readFileSync, } from "fs";
-import { IEnvExtractor } from "./IEnvExtractor";
-export class NodeEnvVarsExtractor implements IEnvExtractor {
+export class NodeEnvVarsExtractor{
     private getEnvContent(dir):string {
         let envContent = null;
         if (existsSync(`${dir}/.env`)) {

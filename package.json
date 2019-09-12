@@ -1,6 +1,6 @@
 {
   "name": "generator-rznode",
-  "version": "3.2.1",
+  "version": "4.0.0",
   "description": "Create node typescript microservices with routes and tests generator ready to be dockerized",
   "homepage": "",
   "author": {
@@ -28,17 +28,21 @@
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-config-xo": "^0.26.0",
-    "jest": "^24.8.0"
+    "jest": "^24.8.0",
+    "@types/node": "^12.7.2",
+    "@types/sinon": "^7.0.13",
+    "@types/yeoman-generator": "^3.1.4"
   },
   "engines": {
     "npm": ">= 4.0.0"
   },
   "dependencies": {
-    "@types/node": "^12.7.2",
-    "@types/yeoman-generator": "^3.1.4",
+    "@types/mocha": "^5.2.7",
     "chalk": "^2.1.0",
     "change-case": "^3.1.0",
     "json2yaml": "^1.1.0",
+    "mocha": "^6.2.0",
+    "sinon": "^7.4.2",
     "yeoman-generator": "^2.0.1",
     "yosay": "^2.0.1"
   },
@@ -72,8 +76,8 @@
     ]
   },
   "scripts": {
-    "pretest": "eslint .",
-    "test": "jest"
+    
+    "test": "mocha --recursive"
   },
   "repository": "odedlevy02/rznode",
   "license": "Apache-2.0"

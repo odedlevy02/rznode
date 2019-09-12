@@ -1,7 +1,6 @@
-import { readdirSync, existsSync, writeFileSync, appendFileSync, readFileSync, fstat } from "fs";
+import { readdirSync, existsSync, writeFileSync} from "fs";
 import * as YAML from "json2yaml";
-import { getEnvVarExtractor } from "./envVarsExtractors/envVarExtractorFactory";
-import { NodeEnvVarsExtractor } from "./envVarsExtractors/nodeEnvVarsExtractor";
+import { NodeEnvVarsExtractor } from "./nodeEnvVarsExtractor";
 import { camelCase, paramCase, pascalCase, sentenceCase, snakeCase } from 'change-case'
 
 export function generateDockerCompose() {
@@ -11,14 +10,14 @@ export function generateDockerCompose() {
   let dockerComposeYaml = YAML.stringify(dockerComposeJson);
   writeFileSync("docker-compose.yaml", dockerComposeYaml);
   //add an env file with repo set to local host
-  let envContent = `
-  #set the container repo path
+  let envContent = `#set the container repo path
   CONTAINER_REPO=localhost
   `
   writeFileSync(".env", envContent);
 }
 
 const getDirectories = (source) => {
+  
   if (existsSync(source)) {
     return readdirSync(source, { withFileTypes: true })
       .filter(dir => dir.isDirectory())
@@ -28,16 +27,18 @@ const getDirectories = (source) => {
   }
 }
 
-function getDockerServices() {
-  let serverDirs = getDirectories("servers")
-  let clientsDirs = getDirectories("clients")
-  let dirs = [...serverDirs, ...clientsDirs];
+export function getDockerServices(source=".") {
+  //get up to 2 levels down
+  let dirs = [];
+  let rootDirs = getDirectories(source)
+  rootDirs.forEach(childDir=>{
+    dirs.push(childDir)
+    let childDirs = getDirectories(childDir);
+    dirs = [...dirs,...childDirs]
+  })
   let dockerDirs = dirs.filter(dir => existsSync(`${dir}/Dockerfile`));
-  //console.log(JSON.stringify(dockerDirs));
   return dockerDirs;
 }
-
-
 
 const portReplace: { from: string, to: string }[] = []
 
@@ -53,7 +54,7 @@ function buildJsonContent() {
     let service: any = {}
     services[serverName] = service;
     service.build = {
-      context: `./${fullPath}`
+      context: `${fullPath}`
     }
     service.image = `\${CONTAINER_REPO}/${paramServerName}:latest`
     let envExtractor = new NodeEnvVarsExtractor();
