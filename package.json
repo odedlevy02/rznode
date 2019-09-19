@@ -1,6 +1,6 @@
 {
   "name": "generator-rznode",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Create node typescript microservices with routes and tests generator ready to be dockerized",
   "homepage": "",
   "author": {
@@ -76,7 +76,6 @@
     ]
   },
   "scripts": {
-    
     "test": "mocha --recursive"
   },
   "repository": "odedlevy02/rznode",
