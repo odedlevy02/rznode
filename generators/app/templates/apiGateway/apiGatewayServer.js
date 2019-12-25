@@ -3,7 +3,7 @@ import * as http from "http"
 import * as express from "express";
 import * as bodyParser from "body-parser"
 import * as compression from "compression"
-import { IRouteConfig, IRoutePath, IRouteAppendToBody } from "./dataModels/IRoutesConfig";
+import { IRoutesConfig, IHostConfig, IRouteAppendToBodyConfig, ISingleRouteConfig } from "./dataModels/IRoutesConfig";
 import * as objectPath from "object-path";
 import * as swaggerUi from "swagger-ui-express"
 import * as chalk from "chalk";
@@ -13,7 +13,7 @@ export class ApiGatewayServer {
 
     app: express.Application = null;
     port = process.env.PORT || 3000;
-    config: IRouteConfig = null;
+    config: IRoutesConfig = null;
     constructor() {
         this.app = express();
         this.app.use(bodyParser.json())
@@ -23,12 +23,12 @@ export class ApiGatewayServer {
 
     }
 
-    public setSwagger=()=>{
+    public setSwagger = () => {
         let swaggerDocument = require('./swagger.json');
-        this.app.use('/explorer', swaggerUi.serve, swaggerUi.setup(swaggerDocument,{"showExplorer": true}));
+        this.app.use('/explorer', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { "showExplorer": true }));
         console.log(`For exploring the apis open: http://localhost:${this.port}/explorer`)
-      }
-    
+    }
+
 
     public startServer = () => {
         var httpServer = http.createServer(this.app);
@@ -38,31 +38,54 @@ export class ApiGatewayServer {
     }
 
     //add any custom route 
-    setCustomRoutes(){
+    setCustomRoutes() {
         //sample
         // this.app.post("/customRoute",(req,res)=>{
         //     res.status(200).send({message:"I am custom"})
         // })
     }
 
-    //main method. Will receive a route config and will iterate over all its routes
+    //main method. Will receive a routes config and will iterate over all its routes
     //Will then create an express route, append middleware and set the default options that will enable
     //to catch errors, append properties and resolve paths
-    setRoutesFromConfig(config: IRouteConfig) {
+    setRoutesFromConfig(config: IRoutesConfig) {
         this.config = config;
-        this.appendAllHostPaths(config).forEach(path => {
-            let method = this.getPathMethod(path.method);
-            if (path.middlewares && path.middlewares.length > 0) {
-                this.app[method](path.source, ...path.middlewares, proxy(this.selectProxyHost, this.getGeneralOptions(path.target, path.appendToBody)))
-            } else {
-                this.app[method](path.source, proxy(this.selectProxyHost, this.getGeneralOptions(path.target,path.appendToBody)))
-            }
-            console.log(chalk.green(`[${method}] ${path.source} -> ${this.selectProxyHostFromUrl(path.source)}${path.target}`))
-        });
+        //iterate over each host and in it iterate over each route and build the route
+        config.hosts.forEach(host => {
+            console.log(chalk.cyanBright(`Host ${host.host} routes:`))
+            host.routes.forEach(route => {
+                this.buildSingleRoute(host, route)
+            })
+        })
+    }
+
+    buildSingleRoute(host: IHostConfig, route: ISingleRouteConfig) {
+        let method = this.getPathMethod(route.method);
+        let middlewareList = this.getMiddlewaresInRoutes(host, route);
+        if (middlewareList && middlewareList.length > 0) {
+            this.app[method](route.source, ...middlewareList, proxy(host.host, this.getGeneralOptions(route.target, route.appendToBody)))
+        } else {
+            this.app[method](route.source, proxy(host.host, this.getGeneralOptions(route.target, route.appendToBody)))
+        }
+        console.log(chalk.green(`   [${method}] ${route.source} -> ${host.host}${route.target}`))
+    }
+
+    //Middleware can be defined per each path in route or in the entire route
+    //if defined in path - even when empty array - return path middleware
+    //if not in path and in route - return that
+    //otherwise return empty
+    private getMiddlewaresInRoutes(host: IHostConfig, route: ISingleRouteConfig) {
+        if (route.middlewares) {
+            return route.middlewares
+        } else if (host.middlewares) {
+            return host.middlewares
+        } else {
+            return null;
+        }
     }
 
     //return the general options for proxy 
-    getGeneralOptions(targetPath, appendProps: IRouteAppendToBody[]) {
+    getGeneralOptions(targetPath, appendProps: IRouteAppendToBodyConfig[]) {
         return {
             proxyReqPathResolver: this.pathResolver(targetPath), //needed in order to return the original path
             proxyReqBodyDecorator: this.appendPropertiesToBody(appendProps), //returns a method. Receives a list of required fields to append and will append to body
@@ -71,7 +94,7 @@ export class ApiGatewayServer {
         }
     }
 
-    appendPropertiesToBody(propsAppend: IRouteAppendToBody[]) {
+    appendPropertiesToBody(propsAppend: IRouteAppendToBodyConfig[]) {
         //return the method expected by proxyReqBodyDecorator yet now has access to propsAppend
         return (bodyContent, srcReq) => {
             if (propsAppend) {
@@ -96,21 +119,11 @@ export class ApiGatewayServer {
         }
     }
 
-    //on request - extract the first part of the path and try to map it to the relevant base host (e.g. http://localhost:3005)
-    selectProxyHost = (req) => {
-        return this.selectProxyHostFromUrl(req.originalUrl)
-    }
-
-    selectProxyHostFromUrl(originalUrl){
-        let paths = originalUrl.split("/")
-        let url = this.config.hosts.find(host => host.basePath == paths[1])
-        return url.host;
-    }
-
     pathResolver(targetPath) {
-        return (req)=>{
+        return (req) => {
             return targetPath;
         }
+
     }
 
     generalErrorHandler(err, res, next) {
@@ -128,16 +141,6 @@ export class ApiGatewayServer {
         return proxyResData;
     }
 
-    appendAllHostPaths(config: IRouteConfig): IRoutePath[] {
-        let paths = []
-        if(config && config.hosts && config.hosts.length>0){
-            config.hosts.forEach(host => {
-                paths = paths.concat(host.paths);
-            })
-        }
-        return paths
-    }
-
     private onServerListen = () => {
         console.log('App listening on port ' + this.port);
         console.log("you are running in " + process.env.NODE_ENV + " mode.");
@@ -148,11 +151,9 @@ export class ApiGatewayServer {
             case 'EACCES':
                 console.error('port requires elevated privileges');
                 process.exit(1);
-                break;
             case 'EADDRINUSE':
                 console.error('port is already in use');
                 process.exit(1);
-                break;
             default:
                 throw err;
         }

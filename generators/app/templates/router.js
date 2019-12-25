@@ -1,6 +1,7 @@
 import {Router} from "express";
 import * as express from "express";
 import {<%=modulename%>Service} from "./<%=modulenameLower%>.service" 
+import { serviceErrorReduce } from "../helpers/serviceErrorReducer";
 
 class <%=modulename%>Router{
 
@@ -15,8 +16,15 @@ class <%=modulename%>Router{
     this.router.get("/sample", this.sample);
   }
 
-  sample=(req,res,next)=>{
-    res.status(200).send({res:"Response"})
+  sample=async (req,res)=>{
+    try {
+      let result = null //await new <%=modulename%>Service().sample()
+      res.status(200).send(result)
+    } catch (err) {
+      let error = serviceErrorReduce(err);
+      console.log("Error in sample: ", error)
+      res.status(500).send({ message: error })
+    }
   }
 }
 

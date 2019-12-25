@@ -3,7 +3,6 @@ import { camelCase, paramCase, pascalCase, sentenceCase, snakeCase } from 'chang
 import * as path from "path"
 import * as fs from "fs"
 export function generateNodeFiles(generator) {
-  //let projnameLower = camelCase(generator.props.projname);
   let projnameParamCase = paramCase(generator.props.projname);
   generator.fs.copy(
     generator.templatePath(`index.js`),

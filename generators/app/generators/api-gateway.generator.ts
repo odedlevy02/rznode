@@ -2,64 +2,63 @@ import { camelCase, paramCase, pascalCase, sentenceCase, snakeCase } from 'chang
 import * as path from "path"
 import * as fs from "fs"
 export function generateApiGatewayServer(generator) {
-  let projnameLower = camelCase(generator.props.projname);
-  let projnameParamCase = paramCase(projnameLower);
+  let projnameParamCase = paramCase(generator.props.projname);
   generator.fs.copy(
     generator.templatePath(`apiGateway/index.js`),
-    generator.destinationPath(`${projnameLower}/index.ts`));
+    generator.destinationPath(`${projnameParamCase}/index.ts`));
   generator.fs.copy(
     generator.templatePath(`apiGateway/apiGatewayServer.js`),
-    generator.destinationPath(`${projnameLower}/apiGatewayServer.ts`));
+    generator.destinationPath(`${projnameParamCase}/apiGatewayServer.ts`));
   generator.fs.copy(
-    generator.templatePath(`serviceErrorReduce.js`),
-    generator.destinationPath(`${projnameLower}/helpers/serviceErrorReduce.ts`));
+    generator.templatePath(`serviceErrorReducer.js`),
+    generator.destinationPath(`${projnameParamCase}/helpers/serviceErrorReducer.ts`));
   generator.fs.copy(
     generator.templatePath(`apiGateway/routesConfig.js`),
-    generator.destinationPath(`${projnameLower}/routesConfig.ts`));
+    generator.destinationPath(`${projnameParamCase}/routesConfig.ts`));
   generator.fs.copy(
     generator.templatePath(`apiGateway/IRoutesConfig.js`),
-    generator.destinationPath(`${projnameLower}/dataModels/IRoutesConfig.ts`));
+    generator.destinationPath(`${projnameParamCase}/dataModels/IRoutesConfig.ts`));
   generator.fs.copy(
     generator.templatePath(`_tsconfig.json`),
-    generator.destinationPath(`${projnameLower}/tsconfig.json`));
+    generator.destinationPath(`${projnameParamCase}/tsconfig.json`));
   generator.fs.copy(
     generator.templatePath(`.env`),
-    generator.destinationPath(`${projnameLower}/.env`));
+    generator.destinationPath(`${projnameParamCase}/.env`));
   generator.fs.copyTpl(
     generator.templatePath(`Dockerfile`),
-    generator.destinationPath(`${projnameLower}/Dockerfile`), {
-    projnameLower
+    generator.destinationPath(`${projnameParamCase}/Dockerfile`), {
+    projnameParamCase
   });
   generator.fs.copyTpl(
     generator.templatePath(`Jenkinsfile`),
-    generator.destinationPath(`${projnameLower}/Jenkinsfile`), {
-    projnameLower, projnameParamCase
+    generator.destinationPath(`${projnameParamCase}/Jenkinsfile`), {
+    projnameParamCase
   });
   generator.fs.copyTpl(
     generator.templatePath(`k8s-deploy.yaml`),
-    generator.destinationPath(`${projnameLower}/${projnameParamCase}-k8s-deploy.yaml`), {
+    generator.destinationPath(`${projnameParamCase}/${projnameParamCase}-k8s-deploy.yaml`), {
     projnameParamCase
   });
   generator.fs.copy(
     generator.templatePath(`.dockerignore`),
-    generator.destinationPath(`${projnameLower}/.dockerignore`));
+    generator.destinationPath(`${projnameParamCase}/.dockerignore`));
   generator.fs.copyTpl(
     generator.templatePath(`apiGateway/_swagger.json`),
-    generator.destinationPath(`${projnameLower}/swagger.json`), {
-    header: sentenceCase(projnameLower)
+    generator.destinationPath(`${projnameParamCase}/swagger.json`), {
+    header: sentenceCase(projnameParamCase)
   });
   generator.fs.copyTpl(
     generator.templatePath(`_package.json`),
-    generator.destinationPath(`${projnameLower}/package.json`), {
-    projnameLower
+    generator.destinationPath(`${projnameParamCase}/package.json`), {
+    projnameParamCase
   });
 
   installDependencies(generator);
 }
 
 function installDependencies(generator) {
-  let projnameLower = camelCase(generator.props.projname);
-  var newprojLocation = path.join(process.cwd(), projnameLower)
+  let projnameParamCase = paramCase(generator.props.projname);
+  var newprojLocation = path.join(process.cwd(), projnameParamCase)
   fs.mkdirSync(newprojLocation)
   //change the working directory before install so that npm will find the package.json file created and add node modules in correct location
   process.chdir(newprojLocation);

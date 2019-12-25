@@ -1,18 +1,20 @@
-export type IRouteConfig={
-    hosts?:{
-        basePath:string,host:string,paths:IRoutePath[]
-    }[]
+export type IRoutesConfig={
+    hosts?:IHostConfig[]
 } 
 
-export type IRoutePath ={
+export type IHostConfig={
+    host:string,middlewares?:any[],routes:ISingleRouteConfig[]
+}
+
+export type ISingleRouteConfig ={
     source:string,
     target:string,
     method?:string,
-    appendToBody?:IRouteAppendToBody[],
+    appendToBody?:IRouteAppendToBodyConfig[],
     middlewares?:any[]
 }
 
-export type IRouteAppendToBody={
+export type IRouteAppendToBodyConfig={
     reqPath:string,
     bodyPath:string
 }
