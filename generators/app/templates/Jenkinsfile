@@ -12,7 +12,7 @@ node {
             "VERSION=latest",
             "SERVICE_ROOT=servers"]){
 
-            def path="${SERVICE_ROOT}/<%=projnameLower%>"
+            def path="${SERVICE_ROOT}/<%=projnameParamCase%>"
             dir (path) {
                 stage('build service') {
                     sh "npm install"
