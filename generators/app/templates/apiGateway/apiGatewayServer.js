@@ -51,9 +51,9 @@ export class ApiGatewayServer {
     setRoutesFromConfig(config: IRoutesConfig) {
         this.config = config;
         //iterate over each host and in it iterate over each route and build the route
-        config.hosts.forEach(host => {
+        config && config.hosts && config.hosts.forEach(host => {
             console.log(chalk.cyanBright(`Host ${host.host} routes:`))
-            host.routes.forEach(route => {
+            host.routes && host.routes.forEach(route => {
                 this.buildSingleRoute(host, route)
             })
         })

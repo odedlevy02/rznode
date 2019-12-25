@@ -1,6 +1,6 @@
 {
   "name": "generator-rznode",
-  "version": "4.2.2",
+  "version": "4.2.3",
   "description": "Create node typescript microservices with routes and tests generator ready to be dockerized",
   "homepage": "",
   "author": {
