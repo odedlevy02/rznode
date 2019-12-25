@@ -7,6 +7,8 @@ import { IRouteConfig, IRoutePath, IRouteAppendToBody } from "./dataModels/IRout
 import * as objectPath from "object-path";
 import * as swaggerUi from "swagger-ui-express"
 import * as chalk from "chalk";
+import * as cors from "cors"
+
 export class ApiGatewayServer {
 
     app: express.Application = null;
@@ -17,6 +19,7 @@ export class ApiGatewayServer {
         this.app.use(bodyParser.json())
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(compression());
+        this.app.use(cors())
 
     }
 
@@ -50,18 +53,18 @@ export class ApiGatewayServer {
         this.appendAllHostPaths(config).forEach(path => {
             let method = this.getPathMethod(path.method);
             if (path.middlewares && path.middlewares.length > 0) {
-                this.app[method](path.source, ...path.middlewares, proxy(this.selectProxyHost, this.getGeneralOptions(path.appendToBody)))
+                this.app[method](path.source, ...path.middlewares, proxy(this.selectProxyHost, this.getGeneralOptions(path.target, path.appendToBody)))
             } else {
-                this.app[method](path.source, proxy(this.selectProxyHost, this.getGeneralOptions(path.appendToBody)))
+                this.app[method](path.source, proxy(this.selectProxyHost, this.getGeneralOptions(path.target,path.appendToBody)))
             }
             console.log(chalk.green(`[${method}] ${path.source} -> ${this.selectProxyHostFromUrl(path.source)}${path.target}`))
         });
     }
 
     //return the general options for proxy 
-    getGeneralOptions(appendProps: IRouteAppendToBody[]) {
+    getGeneralOptions(targetPath, appendProps: IRouteAppendToBody[]) {
         return {
-            proxyReqPathResolver: this.pathResolver, //needed in order to return the original path
+            proxyReqPathResolver: this.pathResolver(targetPath), //needed in order to return the original path
             proxyReqBodyDecorator: this.appendPropertiesToBody(appendProps), //returns a method. Receives a list of required fields to append and will append to body
             userResDecorator: this.responseDecoratorErrorLogger, //log 500 errors received from routed to servers
             proxyErrorHandler: this.generalErrorHandler //handle errors that occur prior to routing to servers
@@ -104,8 +107,10 @@ export class ApiGatewayServer {
         return url.host;
     }
 
-    pathResolver(req) {
-        return req.originalUrl;
+    pathResolver(targetPath) {
+        return (req)=>{
+            return targetPath;
+        }
     }
 
     generalErrorHandler(err, res, next) {
