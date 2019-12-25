@@ -67,7 +67,8 @@ export class ApiGatewayServer {
         } else {
             this.app[method](route.source, proxy(host.host, this.getGeneralOptions(route.target, route.appendToBody)))
         }
-        console.log(chalk.green(`   [${method}] ${route.source} -> ${host.host}${route.target}`))
+        let routeTarget = route.target?route.target:route.source;
+        console.log(chalk.green(`   [${method}] ${route.source} -> ${host.host}${routeTarget}`))
     }
 
     //Middleware can be defined per each path in route or in the entire route
@@ -94,6 +95,16 @@ export class ApiGatewayServer {
         }
     }
 
+    pathResolver(targetPath) {
+        return (req) => {
+            if(targetPath){
+                return targetPath;
+            }else{
+                return req.url
+            }
+        }
+    }
+
     appendPropertiesToBody(propsAppend: IRouteAppendToBodyConfig[]) {
         //return the method expected by proxyReqBodyDecorator yet now has access to propsAppend
         return (bodyContent, srcReq) => {
@@ -107,7 +118,6 @@ export class ApiGatewayServer {
             }
             return bodyContent;
         }
-
     }
 
     //default route method (verb) is get. Validate that method set is one of the following
@@ -119,12 +129,7 @@ export class ApiGatewayServer {
         }
     }
 
-    pathResolver(targetPath) {
-        return (req) => {
-            return targetPath;
-        }
-
-    }
+   
 
     generalErrorHandler(err, res, next) {
         console.log("Error in server: ", err)

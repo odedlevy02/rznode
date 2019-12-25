@@ -8,7 +8,7 @@ export type IHostConfig={
 
 export type ISingleRouteConfig ={
     source:string,
-    target:string,
+    target?:string,
     method?:string,
     appendToBody?:IRouteAppendToBodyConfig[],
     middlewares?:any[]

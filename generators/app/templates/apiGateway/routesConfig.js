@@ -5,17 +5,19 @@ export const routesConfig: IRoutesConfig = {
     // hosts: [
     //     {
     //         host: "http://localhost:3002", routes: [
-    //             { source: "/users/:id", target: "/users/:id" },
-    //             {source: "/users/genError", target: "/users/genError", method: "post",
-    //                 middlewares: [authMiddleware],
+    //             { source: "/users/getUserByParaId" },
+    //             {source: "/users/appendToBody", target: "/users/appendToBody", method: "post",
+    //                 //middlewares: [authMiddleware],
     //                 appendToBody: [{ reqPath: "decodedToken.userId", bodyPath: "userId" }]},
-    //             { source: "/users/getUsers", target: "/users/getUsers" },
-    //             { source: "/users/createUser", target: "/users/createTheUsers",method:"post" }
+    //             {source: "/users/genError", method: "post"},
+    //             { source: "/users/getUsers"  },
+    //             { source: "/users/createUser", target: "/users/createTheUsers",method:"post" },
+    //             { source: "/users/:id" }
     //         ]
     //     },
     //     {
-    //         host: "http://localhost:3001",middlewares: [authMiddleware], routes: [
-    //             { source: "/dal/users/:id", target: "/users/:id" },
+    //         host: "http://localhost:3001",routes: [ //middlewares: [authMiddleware], 
+    //             { source: "/api/*" },
     //         ]
     //     }
     // ]
