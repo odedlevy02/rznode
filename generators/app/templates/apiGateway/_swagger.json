@@ -1,0 +1,14 @@
+{
+    "swagger": "2.0",
+    "info": {
+           "version": "1.0.0",
+           "title": "Api Gateway",
+           "description": "Generic Api Gateway"
+           },
+    "schemes": [
+           "http",
+           "https"
+    ],
+    "paths": {
+    }
+}

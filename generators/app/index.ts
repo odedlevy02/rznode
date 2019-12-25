@@ -11,6 +11,7 @@ import { generateUnitTest } from "./generators/unittest.generator";
 import { generateModule } from "./generators/module.generator";
 import { generateNodeFiles } from "./generators/node.generator";
 import { generateDockerCompose } from "./generators/docker-compose/docker-compose.generator";
+import { generateApiGatewayServer } from "./generators/api-gateway.generator";
 
 module.exports = class extends Generator {
   prompting() {
@@ -22,6 +23,7 @@ module.exports = class extends Generator {
         message: 'What would you like to generate',
         choices: [
           { name: "New Node service", value: "nodeservice" },
+          { name: "New Api Gateway service", value: "apigatewayservice" },
           { name: "New Module (router and service)", value: "module" },
           { name: "Unit test", value: "unittest" },
           { name: "Prometheus counter", value: "counter" },
@@ -35,6 +37,13 @@ module.exports = class extends Generator {
         type: "input",
         name: "projname",
         message: "What is the name of your new node service?"
+      }, {
+        when: (response => {
+          return response.gentype == "apigatewayservice"
+        }),
+        type: "input",
+        name: "projname",
+        message: "What is the name of your new api gateway service?"
       }, {
         when: (response => {
           return response.gentype == "module"
@@ -78,6 +87,9 @@ module.exports = class extends Generator {
       case "nodeservice":
         generateNodeFiles(this);
         break;
+      case "apigatewayservice":
+        generateApiGatewayServer(this);
+          break;
       case "module":
         generateModule(this);
         break;
