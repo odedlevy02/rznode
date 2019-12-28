@@ -10,11 +10,19 @@ export type ISingleRouteConfig ={
     source:string,
     target?:string,
     method?:string,
+    description?:string,
     appendToBody?:IRouteAppendToBodyConfig[],
+    appendToQuery?:IRouteAppendToQueryConfig[],
     middlewares?:any[]
 }
 
 export type IRouteAppendToBodyConfig={
     reqPath:string,
-    bodyPath:string
+    bodyPath:string,
+    appendToArray?:boolean
+}
+export type IRouteAppendToQueryConfig={
+    reqPath:string,
+    queryPath?:string,
+    appendToArray?:boolean
 }

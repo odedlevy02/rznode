@@ -1,18 +1,23 @@
 import { IRoutesConfig } from "./dataModels/IRoutesConfig";
 
+// export function authMiddleware(req, res, next) {
+//     req.decodedToken = { userId: 1, roleId: 2}
+//     next();
+// }
+
 export const routesConfig: IRoutesConfig = {
     //Sample hosts with paths
     // hosts: [
     //     {
     //         host: "http://localhost:3002", routes: [
     //             { source: "/users/getUserByParaId" },
-    //             {source: "/users/appendToBody", target: "/users/appendToBody", method: "post",
-    //                 //middlewares: [authMiddleware],
+    //             {source: "/users/appendToBody", method: "post",
+    //                 middlewares: [authMiddleware],
     //                 appendToBody: [{ reqPath: "decodedToken.userId", bodyPath: "userId" }]},
-    //             {source: "/users/genError", method: "post"},
-    //             { source: "/users/getUsers"  },
     //             { source: "/users/createUser", target: "/users/createTheUsers",method:"post" },
-    //             { source: "/users/:id" }
+    //             {source: "/users/appendToQuery", method: "get",
+    //                 middlewares: [authMiddleware],
+    //                 appendToQuery: [{ reqPath: "decodedToken.userId", queryPath: "userId" }]},
     //         ]
     //     },
     //     {

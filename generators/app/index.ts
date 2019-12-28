@@ -12,6 +12,7 @@ import { generateModule } from "./generators/module.generator";
 import { generateNodeFiles } from "./generators/node.generator";
 import { generateDockerCompose } from "./generators/docker-compose/docker-compose.generator";
 import { generateApiGatewayServer } from "./generators/api-gateway.generator";
+import { buildPackageJsonScripts } from "./generators/global-package-json.generator";
 
 module.exports = class extends Generator {
   prompting() {
@@ -26,6 +27,7 @@ module.exports = class extends Generator {
           { name: "New Api Gateway service", value: "apigatewayservice" },
           { name: "New Module (router and service)", value: "module" },
           { name: "Unit test", value: "unittest" },
+          { name: "Global package json scripts", value: "globalPackageJson" },
           { name: "Prometheus counter", value: "counter" },
           { name: "Create Docker Compose file", value: "dockerCompose" },
           { name: "Client Dockerfile", value: "clientDocker" }
@@ -65,7 +67,7 @@ module.exports = class extends Generator {
         type: "input",
         name: "counterName",
         message: "What is the counter name?"
-      }, 
+      },
       {
         when: (response => {
           return response.gentype == "dockerCompose"
@@ -73,12 +75,21 @@ module.exports = class extends Generator {
         type: "confirm",
         name: "confirm",
         message: "Make sure to run from your root directory containing a folder for servers and client apps. Continue?"
+      },
+      {
+        when: (response => {
+          return response.gentype == "globalPackageJson"
+        }),
+        type: "confirm",
+        name: "confirmGlobalPackageJson",
+        message: "This feature will overwrite your global package.json scripts content. Do you want to continue?"
       }
     ];
 
     return this.prompt(prompts).then(props => {
-      // To access props later use this.props.someAnswer;
+      // props is of type: {gentType:"string","someConfirm":boolean}
       (<any>this).props = props;
+      //console.log(props)
     });
   }
 
@@ -89,7 +100,7 @@ module.exports = class extends Generator {
         break;
       case "apigatewayservice":
         generateApiGatewayServer(this);
-          break;
+        break;
       case "module":
         generateModule(this);
         break;
@@ -105,9 +116,14 @@ module.exports = class extends Generator {
       case "dockerCompose":
         generateDockerCompose();
         break;
+      case "globalPackageJson":
+        if((<any>this).props.confirmGlobalPackageJson){
+          buildPackageJsonScripts();
+        }
+        break;
     }
 
   }
 
- 
+
 };

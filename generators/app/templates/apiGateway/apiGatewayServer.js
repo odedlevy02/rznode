@@ -63,9 +63,9 @@ export class ApiGatewayServer {
         let method = this.getPathMethod(route.method);
         let middlewareList = this.getMiddlewaresInRoutes(host, route);
         if (middlewareList && middlewareList.length > 0) {
-            this.app[method](route.source, ...middlewareList, proxy(host.host, this.getGeneralOptions(route.target, route.appendToBody)))
+            this.app[method](route.source, ...middlewareList, proxy(host.host, this.getGeneralOptions(route.target, route.appendToBody,route.appendToQuery)))
         } else {
-            this.app[method](route.source, proxy(host.host, this.getGeneralOptions(route.target, route.appendToBody)))
+            this.app[method](route.source, proxy(host.host, this.getGeneralOptions(route.target, route.appendToBody,route.appendToQuery)))
         }
         let routeTarget = route.target?route.target:route.source;
         console.log(chalk.green(`   [${method}] ${route.source} -> ${host.host}${routeTarget}`))
@@ -86,25 +86,74 @@ export class ApiGatewayServer {
     }
 
     //return the general options for proxy 
-    getGeneralOptions(targetPath, appendProps: IRouteAppendToBodyConfig[]) {
+    getGeneralOptions(targetPath, appendToBodyProps: IRouteAppendToBodyConfig[],appendToQueryProps: IRouteAppendToQueryConfig[]) {
         return {
-            proxyReqPathResolver: this.pathResolver(targetPath), //needed in order to return the original path
-            proxyReqBodyDecorator: this.appendPropertiesToBody(appendProps), //returns a method. Receives a list of required fields to append and will append to body
+            proxyReqPathResolver: this.pathResolver(targetPath,appendToQueryProps), //needed in order to return the original path
+            proxyReqBodyDecorator: this.appendPropertiesToBody(appendToBodyProps), //returns a method. Receives a list of required fields to append and will append to body
             userResDecorator: this.responseDecoratorErrorLogger, //log 500 errors received from routed to servers
-            proxyErrorHandler: this.generalErrorHandler //handle errors that occur prior to routing to servers
+            proxyErrorHandler: this.generalErrorHandler, //handle errors that occur prior to routing to servers
+            proxyReqOptDecorator :this.setHeaders //set the default content-type header to application/json so that it will be possible to append properties to body in cases such as route/:id/some where only path param is passed
         }
     }
 
-    pathResolver(targetPath) {
+    setHeaders(proxyReqOpts, srcReq){
+        //set the default content type to json if not defined otherwise
+        let headersList = Object.keys(proxyReqOpts.headers)
+        if(!headersList.includes("Content-Type") && !headersList.includes("content-type")){
+            proxyReqOpts.headers['Content-Type'] = 'application/json';
+        }
+        return proxyReqOpts;
+    }
+
+    pathResolver(targetPath,propsAppend: IRouteAppendToQueryConfig[]) {
         return (req) => {
-            if(targetPath){
-                return targetPath;
+            let baseUrl = req.url; //by default return the url as is
+            if(targetPath){ //if a target path is defined - then use it
+                baseUrl = targetPath;
+            }
+            if(propsAppend){ //if append query params - then append to the url
+                baseUrl = this.appendPropertiesToQueryParams(baseUrl,req,propsAppend)
+            }
+            return baseUrl;
+        }
+    }
+
+    //when required append a set of params to the query params list
+    appendPropertiesToQueryParams(baseUrl:string,req,propsAppend: IRouteAppendToQueryConfig[]){
+        if (propsAppend) {
+            //create an array of prop=value from request and propAppend 
+            let appendStrings = this.createPropArrayFromAppendData(req,propsAppend)
+            //append the values to the query params
+            baseUrl = this.appendQueryParamsToUrl(baseUrl,appendStrings);
+        }
+        return baseUrl;
+    }
+
+    //receive list of key=values and appends to the url
+    private appendQueryParamsToUrl(baseUrl:string,params:string[]):string{
+        if(params.length>0){
+            let queryString = params.join("&")
+            if(baseUrl.includes("?")){
+                baseUrl += `&${queryString}`
             }else{
-                return req.url
+                baseUrl+=`?${queryString}`
             }
         }
+        return baseUrl;
     }
 
+    //creates an array of key=value from the list of required appended properties
+    private createPropArrayFromAppendData(req,propsAppend: IRouteAppendToQueryConfig[]){
+        let appendStrings = []
+        propsAppend.forEach(prop => {
+            if (prop.reqPath && prop.queryPath) {
+                let propValue = objectPath.get(req, prop.reqPath);
+                appendStrings.push(`${prop.queryPath}=${propValue}`)
+            }
+        })
+        return appendStrings;
+    }
+    //when requested will append additional data to the body of the request
     appendPropertiesToBody(propsAppend: IRouteAppendToBodyConfig[]) {
         //return the method expected by proxyReqBodyDecorator yet now has access to propsAppend
         return (bodyContent, srcReq) => {
@@ -112,7 +161,11 @@ export class ApiGatewayServer {
                 propsAppend.forEach(prop => {
                     if (prop.reqPath && prop.bodyPath) {
                         let propValue = objectPath.get(srcReq, prop.reqPath);
-                        objectPath.set(bodyContent, prop.bodyPath, propValue)
+                        if(prop.appendToArray){
+                            objectPath.push(bodyContent, prop.bodyPath, propValue)
+                        }else{
+                            objectPath.set(bodyContent, prop.bodyPath, propValue)
+                        }
                     }
                 })
             }
