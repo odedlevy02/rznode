@@ -17,11 +17,11 @@ export const routesConfig: IRoutesConfig = {
     //             { source: "/users/createUser", target: "/users/createTheUsers",method:"post" },
     //             {source: "/users/appendToQuery", method: "get",
     //                 middlewares: [authMiddleware],
-    //                 appendToQuery: [{ reqPath: "decodedToken.userId", queryPath: "userId" }]},
+    //                 appendToQuery: [{ reqPath: "decodedToken.userId", queryParamName: "userId" }]},
     //         ]
     //     },
     //     {
-    //         host: "http://localhost:3001",routes: [ //middlewares: [authMiddleware], 
+    //         host: "http://localhost:3001",middlewares: [authMiddleware],routes: [  
     //             { source: "/api/*" },
     //         ]
     //     }

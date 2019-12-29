@@ -61,10 +61,19 @@ Additional properties in a single route:
 1. **method** - by default the method is __get__. You can set to one of the following:get, post, delete, put and patch
 2. **middlewares** - a list of middleware that should be called prior to the route. The array needs a ref to method instance of type (req,res,next) or a method call that will return this method signature. Make sure to call next() in your middleware so that the flow will continue. Middlewares array can also be placed in the **host** level and will append the middlewares to all routes unless defined specifically inside the route. 
 > NOTE - if you want to remove the middelware from a specific route - set an empty middelwares array in that route overriding the hosts middlewares
-
-3. appendToBody - an object containing two fields: 
+Here is a middleware sample:
+```
+function authMiddleware(req, res, next) {
+     req.decodedToken = { userId: 1, roleId: 2}
+     next();
+ }
+```
+3. appendToBody - This enables to append properties from the request object into the the request body 
    1. reqPath - a path inside the req object from which we can extract data
    2. bodyPath - a path inside the object which will contain the value extracted from reqPath
+4. appendToQuery - Similar to appendToBody yet this will append query params to the url 
+   1. reqPath - a path inside the req object from which we can extract data
+   2. queryParamName - the query param name that will store the value extracted from reqPath
 
 Here is a sample of routes:
 ```
@@ -74,17 +83,17 @@ Here is a sample of routes:
         {
             host: "http://localhost:3002", routes: [
                 { source: "/users/getUserByParaId" },
-                {source: "/users/appendToBody", target: "/users/appendToBody", method: "post",
-                    //middlewares: [authMiddleware],
+                {source: "/users/appendToBody", method: "post",
+                    middlewares: [authMiddleware],
                     appendToBody: [{ reqPath: "decodedToken.userId", bodyPath: "userId" }]},
-                {source: "/users/genError", method: "post"},
-                { source: "/users/getUsers"  },
                 { source: "/users/createUser", target: "/users/createTheUsers",method:"post" },
-                { source: "/users/:id" }
+                {source: "/users/appendToQuery", method: "get",
+                    middlewares: [authMiddleware],
+                    appendToQuery: [{ reqPath: "decodedToken.userId", queryParamName: "userId" }]},
             ]
         },
         {
-            host: "http://localhost:3001", routes: [ //,middlewares: [authMiddleware]
+            host: "http://localhost:3001",middlewares: [authMiddleware],routes: [  
                 { source: "/api/*" },
             ]
         }

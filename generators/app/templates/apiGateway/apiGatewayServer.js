@@ -3,7 +3,7 @@ import * as http from "http"
 import * as express from "express";
 import * as bodyParser from "body-parser"
 import * as compression from "compression"
-import { IRoutesConfig, IHostConfig, IRouteAppendToBodyConfig, ISingleRouteConfig } from "./dataModels/IRoutesConfig";
+import { IRoutesConfig, IHostConfig, IRouteAppendToBodyConfig, IRouteAppendToQueryConfig, ISingleRouteConfig } from "./dataModels/IRoutesConfig";
 import * as objectPath from "object-path";
 import * as swaggerUi from "swagger-ui-express"
 import * as chalk from "chalk";
@@ -146,9 +146,9 @@ export class ApiGatewayServer {
     private createPropArrayFromAppendData(req,propsAppend: IRouteAppendToQueryConfig[]){
         let appendStrings = []
         propsAppend.forEach(prop => {
-            if (prop.reqPath && prop.queryPath) {
+            if (prop.reqPath && prop.queryParamName) {
                 let propValue = objectPath.get(req, prop.reqPath);
-                appendStrings.push(`${prop.queryPath}=${propValue}`)
+                appendStrings.push(`${prop.queryParamName}=${propValue}`)
             }
         })
         return appendStrings;

@@ -23,6 +23,6 @@ export type IRouteAppendToBodyConfig={
 }
 export type IRouteAppendToQueryConfig={
     reqPath:string,
-    queryPath?:string,
+    queryParamName?:string,
     appendToArray?:boolean
 }

@@ -63,5 +63,5 @@ function installDependencies(generator) {
   //change the working directory before install so that npm will find the package.json file created and add node modules in correct location
   process.chdir(newprojLocation);
   generator.npmInstall(["body-parser", "compression", "dotenv", "express", "dotenv-display", "swagger-ui-express", "object-path", "express-http-proxy", "cors"], { save: true })
-  generator.npmInstall(["@types/dotenv", "@types/express", "@types/node", "chai", "mocha", "sinon", "@types/sinon", "@types/mocha", "chalk"], { "save-dev": true })
+  generator.npmInstall(["@types/express", "@types/node", "chai", "mocha", "sinon", "@types/sinon", "@types/mocha", "chalk"], { "save-dev": true })
 }
