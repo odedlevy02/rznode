@@ -1,4 +1,5 @@
 import { IRouteAppendToQueryConfig } from "./IRoutesConfig";
+import { appendPropertiesToQueryParams } from "./appendPropertiesToQuery";
 
 export function pathResolver(targetPath, propsAppend: IRouteAppendToQueryConfig[]) {
     return (req) => {
@@ -7,7 +8,7 @@ export function pathResolver(targetPath, propsAppend: IRouteAppendToQueryConfig[
             baseUrl = targetPath;
         }
         if (propsAppend) { //if append query params - then append to the url
-            baseUrl = this.appendPropertiesToQueryParams(baseUrl, req, propsAppend)
+            baseUrl = appendPropertiesToQueryParams(baseUrl, req, propsAppend)
         }
         return baseUrl;
     }
