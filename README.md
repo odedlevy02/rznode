@@ -1,8 +1,27 @@
 # generator-tsnode 
-This generator assists in creating a basic structure for Node web apps using Express and is written in Typescript.
+The ultimate framework for creating Nodejs microservices written in typescript.
 
-The Generator also enables adding routes, unit tests and a logger based on Winston
-The logger support overwriting code using console.log and writing the logs to the file system or to AWS S3
+The general architecture for microservices is to have a single service as an Api Gateway.
+The api gateway will receive all requests and according to configuration decide where to route the services. It also manages any security and logging required for all api calls.
+
+One you have the gateway you go on and create the Business logic layer of services. 
+
+This framework wil get you up and running in minutes.
+
+Rznode contains the following features:
+1. No code voodoo. Its all generated and displayed for you so that you can debug and modify anything according to your requirements
+2. Ability to create a configurable Api Gateway that is also extensible to any additional custom route
+3. Auto generate of swagger for the Api Gateway
+4. Ability to create a Node js express service containing a swagger support, docker support, jenkins support and even Kubernetes support
+5. If you follow the structure of clients and server folders it will generate a generic package.json with scripts to build the entire project in one click!
+6. If you follow the structure of clients and server folders it will generate the docker-compose file with environment params and correct service referencing
+7. Generate a client docker file (for angular and react) that has a multistage build that takes the compiled output and runs it in Nginx
+8. Add Prometheus counters that can be used for service measurements
+
+
+This is a huge time saver for all the pluming that is done over and over for each new project and each new service.
+
+If you are working in vscode I have also added VScode code snippets that you can paste in the JSONC section in order to generate swagger paths with ease.
 
 ## Installation
 
