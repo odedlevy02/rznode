@@ -24,7 +24,7 @@ function updateSwaggerWithMissingRoutes(routeConfig, swagger) {
             if (doesPathExist == false) {
                 try {
                     createPathInSwagger(swagger, route, method)
-                    console.log(`path: '${route.source}' added to swagger`)
+                    console.log(`path: '[${method}] ${route.source}' added to swagger`)
                 } catch (err) {
                     console.log(`failed to build swagger for path: ${route.source}. Error: ${err.message}`)
                 }
