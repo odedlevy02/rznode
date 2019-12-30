@@ -74,6 +74,10 @@ function authMiddleware(req, res, next) {
 4. appendToQuery - Similar to appendToBody yet this will append query params to the url 
    1. reqPath - a path inside the req object from which we can extract data
    2. queryParamName - the query param name that will store the value extracted from reqPath
+5. appendToHeader - This enables to append properties from the request object into the the request header
+   1.  reqPath - a path inside the req object from which we can extract data
+   2.  headerKey - the header key name for storing the value extracted from reqPath
+6. isFileUpload - boolean value. When set to true will support streaming a file to another service. This can be used in conjunction with appendToHeader for passing additional data like userId to the other server inside the header params 
 
 Here is a sample of routes:
 ```
@@ -101,6 +105,19 @@ Here is a sample of routes:
 
 }
 ```
+#### Generating swagger.json from routes
+Since there is a config for defining routes it is also possible to enrich the routes config so that it will contain enough information to generate swagger.json paths
+
+To support auto generate of swagger it is possible to add to each route the following fields:
+1. description - will be displayed inside swagger summary
+2. tag - a string that will be placed in swagger tags list for grouping apis
+3. inputSample - a json containing sample data. It will behave different for different type of routes
+   1. **post, put and patch** - the json will be converted to json Schema and will be displayed as the **body** in swagger parameter
+   2. **get and delete** - the json should be flat and each key value pair will be converted to **query** parameters in swagger
+   3. isFileUpload - when the route is for files, the inputSample first key name will be used as the name of the **formData** file name. Other properties will be ignored. For instance if you want the file key name to be called myFile, set the inputSample to {myFile:""}
+
+Once completed run yo rznode and select 'generate swagger in Api gateway'
+This will only create swagger paths that are not already defined in swagger.json paths.therefore you can modify the files and not worry about overriding the modifications
 
 ### New Module
 Adding a new module will create a folder by the module name and 2 classes. One for defining the routes and the second for defining a service containing the buisness logic.
