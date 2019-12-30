@@ -37,7 +37,7 @@ function loadPackageJson(){
         let fileContent = readFileSync("package.json")
         return JSON.parse(<any>fileContent);
     }else{
-        console.log("package.json file does not exist in this folder")
+        console.log("package.json file does not exist in folder ",__dirname)
         return null;
     }
 }

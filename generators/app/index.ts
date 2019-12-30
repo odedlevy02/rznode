@@ -13,6 +13,7 @@ import { generateNodeFiles } from "./generators/node.generator";
 import { generateDockerCompose } from "./generators/docker-compose/docker-compose.generator";
 import { generateApiGatewayServer } from "./generators/api-gateway.generator";
 import { buildPackageJsonScripts } from "./generators/global-package-json.generator";
+import { generateSwagger } from "./generators/swagger.generator";
 
 module.exports = class extends Generator {
   prompting() {
@@ -28,6 +29,7 @@ module.exports = class extends Generator {
           { name: "New Module (router and service)", value: "module" },
           { name: "Unit test", value: "unittest" },
           { name: "Global package json scripts", value: "globalPackageJson" },
+          { name: "Generate swagger in Api Gateway", value: "swaggerGenerator" },
           { name: "Prometheus counter", value: "counter" },
           { name: "Create Docker Compose file", value: "dockerCompose" },
           { name: "Client Dockerfile", value: "clientDocker" }
@@ -117,9 +119,12 @@ module.exports = class extends Generator {
         generateDockerCompose();
         break;
       case "globalPackageJson":
-        if((<any>this).props.confirmGlobalPackageJson){
+        if ((<any>this).props.confirmGlobalPackageJson) {
           buildPackageJsonScripts();
         }
+        break;
+      case "swaggerGenerator":
+        generateSwagger(this.destinationRoot());
         break;
     }
 

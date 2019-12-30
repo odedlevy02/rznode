@@ -11,6 +11,8 @@ export const routesConfig: IRoutesConfig = {
     //     {
     //         host: "http://localhost:3002", routes: [
     //             { source: "/users/getUserByParaId" },
+    //             { source: "/users/saveUser",method:"post",tag:"Users",description:"add a user to users",inputSample:{name:"John",age:33} }, //sample when auto generating swagger with post- add tag, description and inputSample as json
+    //             { source: "/users/getUser",method:"get",tag:"Users",description:"get a user with query param",inputSample:{id:12} }, //sample when auto generating swagger with get- add tag, description and inputSample as json with keys
     //             {source: "/users/appendToBody", method: "post",
     //                 middlewares: [authMiddleware],
     //                 appendToBody: [{ reqPath: "decodedToken.userId", bodyPath: "userId" }]},

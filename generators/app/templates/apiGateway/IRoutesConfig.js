@@ -11,6 +11,8 @@ export type ISingleRouteConfig ={
     target?:string,
     method?:string,
     description?:string,
+    tag?:string, //required only when need to build auto generate swagger - this is the tag name in swagger
+    inputSample?:any, //required only when need to build auto generate swagger - defines the input with sample data
     appendToBody?:IRouteAppendToBodyConfig[],
     appendToQuery?:IRouteAppendToQueryConfig[],
     middlewares?:any[]

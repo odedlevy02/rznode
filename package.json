@@ -43,6 +43,7 @@
     "json2yaml": "^1.1.0",
     "mocha": "^6.2.0",
     "sinon": "^7.4.2",
+    "to-json-schema": "^0.2.3",
     "yeoman-generator": "^2.0.1",
     "yosay": "^2.0.1"
   },
