@@ -6,8 +6,8 @@ import * as chalk from "chalk";
 import * as origRequest from "request";
 import { pathResolver } from "./pathResolver";
 import { appendPropertiesToBody } from "./appendPropertiesToBody";
-import { setHeaders } from "./setHeaders";
 import { getUploadFileProxyMethod } from "./uploadFileProxyMethod";
+import { appendPropertiesToHeader } from "./appendPropertiesToHeader";
 
 export class ApiGatewayRouteBuilder {
     constructor(
@@ -76,7 +76,7 @@ export class ApiGatewayRouteBuilder {
         return {
             proxyReqPathResolver: pathResolver(targetPath, appendToQueryProps), //needed in order to return the original path
             proxyReqBodyDecorator: appendPropertiesToBody(appendToBodyProps), //returns a method. Receives a list of required fields to append and will append to body
-            proxyReqOptDecorator: setHeaders(appendToHeaderProps), //set the default content-type header to application/json so that it will be possible to append properties to body in cases such as route/:id/some where only path param is passed
+            proxyReqOptDecorator: appendPropertiesToHeader(appendToHeaderProps), //set the default content-type header to application/json so that it will be possible to append properties to body in cases such as route/:id/some where only path param is passed
             userResDecorator: this.responseDecoratorErrorLogger, //log 500 errors received from routed to servers
             proxyErrorHandler: this.generalErrorHandler //handle errors that occur prior to routing to servers
         }

@@ -28,8 +28,11 @@ export function generateApiGatewayServer(generator) {
     generator.templatePath(`apiGateway/pathResolver.js`),
     generator.destinationPath(`${projnameParamCase}/apiGateway/pathResolver.ts`));
   generator.fs.copy(
-    generator.templatePath(`apiGateway/setHeaders.js`),
-    generator.destinationPath(`${projnameParamCase}/apiGateway/setHeaders.ts`));
+    generator.templatePath(`apiGateway/appendPropertiesToHeader.js`),
+    generator.destinationPath(`${projnameParamCase}/apiGateway/appendPropertiesToHeader.ts`));
+  generator.fs.copy(
+    generator.templatePath(`apiGateway/appendPropertiesToQuery.js`),
+    generator.destinationPath(`${projnameParamCase}/apiGateway/appendPropertiesToQuery.ts`));
   generator.fs.copy(
     generator.templatePath(`apiGateway/uploadFileProxyMethod.js`),
     generator.destinationPath(`${projnameParamCase}/apiGateway/uploadFileProxyMethod.ts`));
