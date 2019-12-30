@@ -12,6 +12,7 @@ const server = new Server();
 
 server.setRoutes();
 server.setStaticFolders();
-server.setSwagger();
+//server.setSwagger();
+server.setDynamicSwagger();
 server.setErrorHandlers();
 server.startServer();

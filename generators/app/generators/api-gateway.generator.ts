@@ -7,8 +7,8 @@ export function generateApiGatewayServer(generator) {
     generator.templatePath(`apiGateway/index.js`),
     generator.destinationPath(`${projnameParamCase}/index.ts`));
   generator.fs.copy(
-    generator.templatePath(`apiGateway/apiGatewayServer.js`),
-    generator.destinationPath(`${projnameParamCase}/apiGatewayServer.ts`));
+    generator.templatePath(`apiGateway/server.js`),
+    generator.destinationPath(`${projnameParamCase}/server.ts`));
   generator.fs.copy(
     generator.templatePath(`serviceErrorReducer.js`),
     generator.destinationPath(`${projnameParamCase}/helpers/serviceErrorReducer.ts`));
@@ -17,7 +17,22 @@ export function generateApiGatewayServer(generator) {
     generator.destinationPath(`${projnameParamCase}/routesConfig.ts`));
   generator.fs.copy(
     generator.templatePath(`apiGateway/IRoutesConfig.js`),
-    generator.destinationPath(`${projnameParamCase}/dataModels/IRoutesConfig.ts`));
+    generator.destinationPath(`${projnameParamCase}/apiGateway/IRoutesConfig.ts`));
+  generator.fs.copy(
+    generator.templatePath(`apiGateway/apiGatewayRouteBuilder.js`),
+    generator.destinationPath(`${projnameParamCase}/apiGateway/apiGatewayRouteBuilder.ts`));
+  generator.fs.copy(
+    generator.templatePath(`apiGateway/appendPropertiesToBody.js`),
+    generator.destinationPath(`${projnameParamCase}/apiGateway/appendPropertiesToBody.ts`));
+  generator.fs.copy(
+    generator.templatePath(`apiGateway/pathResolver.js`),
+    generator.destinationPath(`${projnameParamCase}/apiGateway/pathResolver.ts`));
+  generator.fs.copy(
+    generator.templatePath(`apiGateway/setHeaders.js`),
+    generator.destinationPath(`${projnameParamCase}/apiGateway/setHeaders.ts`));
+  generator.fs.copy(
+    generator.templatePath(`apiGateway/uploadFileProxyMethod.js`),
+    generator.destinationPath(`${projnameParamCase}/apiGateway/uploadFileProxyMethod.ts`));
   generator.fs.copy(
     generator.templatePath(`_tsconfig.json`),
     generator.destinationPath(`${projnameParamCase}/tsconfig.json`));
@@ -62,6 +77,6 @@ function installDependencies(generator) {
   fs.mkdirSync(newprojLocation)
   //change the working directory before install so that npm will find the package.json file created and add node modules in correct location
   process.chdir(newprojLocation);
-  generator.npmInstall(["body-parser", "compression", "dotenv", "express", "dotenv-display", "swagger-ui-express", "object-path", "express-http-proxy", "cors"], { save: true })
+  generator.npmInstall(["body-parser", "compression", "dotenv", "express", "dotenv-display", "swagger-ui-express", "object-path", "express-http-proxy", "cors","request"], { save: true })
   generator.npmInstall(["@types/express", "@types/node", "chai", "mocha", "sinon", "@types/sinon", "@types/mocha", "chalk"], { "save-dev": true })
 }

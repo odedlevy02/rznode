@@ -7,14 +7,14 @@ let configPath = path.join(__dirname, "./.env")
 let env = config({path: configPath});
 displayEnv(env.parsed)
 
-import { ApiGatewayServer} from "./apiGatewayServer";
 import { routesConfig } from "./routesConfig";
+import { Server } from "./server";
 //Load server
-const server = new ApiGatewayServer();
+const server = new Server();
 
 server.setRoutesFromConfig(routesConfig);
 server.setCustomRoutes();
 // server.setStaticFolders();
-server.setSwagger();
+server.setDynamicSwagger();
 server.setErrorHandlers();
 server.startServer();

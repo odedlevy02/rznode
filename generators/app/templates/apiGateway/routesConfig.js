@@ -1,4 +1,4 @@
-import { IRoutesConfig } from "./dataModels/IRoutesConfig";
+import { IRoutesConfig } from "./apiGateway/IRoutesConfig";
 
 // export function authMiddleware(req, res, next) {
 //     req.decodedToken = { userId: 1, roleId: 2}

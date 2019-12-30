@@ -37,26 +37,33 @@ function updateSwaggerWithMissingRoutes(routeConfig, swagger) {
 //Create a swagger path section from a route
 function createPathInSwagger(swagger, route, method) {
     let swaggerPath = convertExpressPathToSwaggerPath(route.source);
-    let parameters = [...getSwaggerParamFromInput(method, route.inputSample, swaggerPath)]
+    let parameters = [...getSwaggerParamFromInput(method, route.inputSample, swaggerPath,route.isFileUpload)]
     let swaggerPathObj = {
-        [method]: {
-            tags: [route.tag],
-            summary: route.description,
-            responses: { "200": { description: "result" } },
-            parameters
-        }
+        tags: [route.tag],
+        summary: route.description,
+        responses: { "200": { description: "result" } },
+        parameters
     }
-
-    swagger.paths[swaggerPath] = swaggerPathObj
+    //create base path if not exist
+    if(!swagger.paths[swaggerPath]){
+        swagger.paths[swaggerPath]={}
+    }
+    swagger.paths[swaggerPath][method] = swaggerPathObj
 }
 
 //convert the inputSample in route to a schema
-function getSwaggerParamFromInput(method: string, input: any, swaggerPath: string) {
+function getSwaggerParamFromInput(method: string, input: any, swaggerPath: string,isFileUpload:boolean=false) {
     let paramsResult = []
     if (input) {
         if (["put", "post", "patch"].includes(method)) {
-            let body = getBodyParam(input)
-            paramsResult.push(body)
+            if(isFileUpload){ //if post of type file upload 
+                let body = getFileUploadParam(input)
+                paramsResult.push(body)
+            }else{
+                let body = getBodyParam(input)
+                paramsResult.push(body)
+            }
+            
         } else { //if query params then create an array of items based on keys in object
             Object.keys(input).forEach(key => {
                 let param = getQueryParam(key, input[key])
@@ -71,6 +78,7 @@ function getSwaggerParamFromInput(method: string, input: any, swaggerPath: strin
     }
     return paramsResult;
 }
+
 
 function getPathParams(swaggerPath: string) {
     // path params support
@@ -110,6 +118,19 @@ function getQueryParam(keyName: string, keyValue) {
     } else {
         return null;
     }
+}
+
+function getFileUploadParam(input) {
+    if (input) {
+        //when input placed in formData take the first param and use its name
+        let keyName = Object.keys(input)[0]
+        return {
+            in: 'formData',
+            name: keyName,
+            type:"file"
+        };
+    }
+    return null;
 }
 
 function getBodyParam(input) {
