@@ -16,7 +16,7 @@ export function buildPackageJsonScripts() {
     scripts["server:install:all"] = createRunAllScript(serverInstallDict);
     scripts["server:transpile:all"] = createRunAllScript(serverTranspileDict);
     scripts["clients:install:all"] = createRunAllScript(clientInstallDict);
-    scripts["install:all"] = "server:install:all && server:transpile:all && client:install:all"
+    scripts["install:all"] = "npm run server:install:all && npm run server:transpile:all && npm run client:install:all"
     packageJson.scripts = scripts;
     savePackageJson(packageJson)
     
