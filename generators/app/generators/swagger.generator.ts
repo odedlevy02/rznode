@@ -1,10 +1,10 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import * as toJsonSchema from 'to-json-schema';
 import * as path from "path";
-export function generateSwagger(rootPath){
+export function generateSwagger(rootPath) {
     let routeConfig = loadRoutesConfig(rootPath)
     let swagger = loadSwaggerJson(rootPath);
-    if(routeConfig && swagger){
+    if (routeConfig && swagger) {
         updateSwaggerWithMissingRoutes(routeConfig, swagger)
         saveSwagger(swagger);
     }
@@ -37,7 +37,7 @@ function updateSwaggerWithMissingRoutes(routeConfig, swagger) {
 //Create a swagger path section from a route
 function createPathInSwagger(swagger, route, method) {
     let swaggerPath = convertExpressPathToSwaggerPath(route.source);
-    let parameters = [...getSwaggerParamFromInput(method, route.inputSample, swaggerPath,route.isFileUpload)]
+    let parameters = [...getSwaggerParamFromInput(method, route.inputSample, route.source, route.isFileUpload)]
     let swaggerPathObj = {
         tags: [route.tag],
         summary: route.description,
@@ -45,80 +45,93 @@ function createPathInSwagger(swagger, route, method) {
         parameters
     }
     //create base path if not exist
-    if(!swagger.paths[swaggerPath]){
-        swagger.paths[swaggerPath]={}
+    if (!swagger.paths[swaggerPath]) {
+        swagger.paths[swaggerPath] = {}
     }
     swagger.paths[swaggerPath][method] = swaggerPathObj
 }
 
 //convert the inputSample in route to a schema
-function getSwaggerParamFromInput(method: string, input: any, swaggerPath: string,isFileUpload:boolean=false) {
+function getSwaggerParamFromInput(method: string, input: any, expressPath: string, isFileUpload: boolean = false) {
     let paramsResult = []
+    //path params are possible in all methods. Start by collecting them
+    //if value found in input - remove the key so that it will not be used again in post and query
+    let pathParams = extractUrlRestParams(expressPath)
+    paramsResult = getPathParams(pathParams)
     if (input) {
         if (["put", "post", "patch"].includes(method)) {
-            if(isFileUpload){ //if post of type file upload 
+            if (isFileUpload) { //if post of type file upload 
                 let body = getFileUploadParam(input)
                 paramsResult.push(body)
-            }else{
+            } else {
                 let body = getBodyParam(input)
                 paramsResult.push(body)
             }
-            
+
         } else { //if query params then create an array of items based on keys in object
             Object.keys(input).forEach(key => {
                 let param = getQueryParam(key, input[key])
-                if (param) {
+                if (param) { 
                     paramsResult.push(param)
                 }
             })
         }
-    } else { //may have params in path
-        let params = getPathParams(swaggerPath)
-        paramsResult = params
     }
     return paramsResult;
 }
 
-
-function getPathParams(swaggerPath: string) {
-    // path params support
-    let params = [];
-    const paramsPattern = /[^{\}]+(?=})/g;
-    const pathParams = swaggerPath.match(paramsPattern);
-    if (pathParams) {
-        for (const param of pathParams) {
-            params.push({
-                in: 'path',
-                name: param
-            })
-        }
+function extractUrlRestParams(url) {
+    let pathRegexp = new RegExp(":[a-zA-Z0-9]*", "g");
+    let matches = url.match(pathRegexp)
+    if (matches) {
+        matches = matches.map(match => match.replace(":", ""))
     }
-    return params;
+    return matches;
+}
+
+function getPathParams(paramsList: string[]) {
+    let swaggerParams = [];
+    if (paramsList) {
+        //iterate over each param and create one
+        paramsList.forEach(param => {
+            swaggerParams.push({
+                in: "path",
+                name: param,
+            })
+        })
+    }
+    return swaggerParams;
 }
 
 function getQueryParam(keyName: string, keyValue) {
     //support only value types of string,number or array
     let param = {
-        in: 'query',
+        in: "query",
         name: keyName,
     }
-    let type = null;
-    switch (typeof keyValue) {
-        case "number":
-            type = "number";
-            break;
-        case "string":
-            type = "string"
-            break;
+    if (keyValue) {
+        let type = null;
+        switch (typeof keyValue) {
+            case "number":
+                type = "number";
+                break;
+            default:
+                type = "string"
+                break;
+        }
+        //anything that is not a number - stringify it
+        if (type != "number") {
+            keyValue = JSON.stringify(keyValue);
+        }
+        if (type != null) {
+            param["example"] = keyValue;
+            param["type"] = type
+
+        }
     }
-    if (type != null) {
-        param["example"] = keyValue;
-        param["schema"] = { type }
-        return param;
-    } else {
-        return null;
-    }
+    return param;
 }
+
 
 function getFileUploadParam(input) {
     if (input) {
@@ -127,7 +140,7 @@ function getFileUploadParam(input) {
         return {
             in: 'formData',
             name: keyName,
-            type:"file"
+            type: "file"
         };
     }
     return null;
@@ -190,7 +203,7 @@ function doesPathExistInSwagger(swagger: any, path: string, method: string) {
 
 function loadRoutesConfig(rootPath) {
     try {
-        let source = path.join(rootPath,"routesConfig")
+        let source = path.join(rootPath, "routesConfig")
         let rConfig = require(source)
         let routesConfig = rConfig.routesConfig
         return routesConfig;
@@ -201,7 +214,7 @@ function loadRoutesConfig(rootPath) {
 }
 
 function loadSwaggerJson(rootPath) {
-    let source = path.join(rootPath,"swagger.json")
+    let source = path.join(rootPath, "swagger.json")
     if (existsSync(source)) {
         let fileContent = readFileSync(source)
         return JSON.parse(<any>fileContent);
