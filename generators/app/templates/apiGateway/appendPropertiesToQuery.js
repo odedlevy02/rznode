@@ -4,8 +4,6 @@ import * as objectPath from "object-path";
 //when required append a set of params to the query params list
 export function appendPropertiesToQueryParams(baseUrl: string, req, propsAppend: IRouteAppendToQueryConfig[]) {
     if (propsAppend) {
-        //append the values to the query params
-        baseUrl = appendOrigQueryParams(baseUrl, req.originalUrl)
         //create an array of prop=value from request and propAppend 
         let appendStrings = createPropArrayFromAppendData(req, propsAppend)
         baseUrl = appendQueryParamsToUrl(baseUrl, appendStrings);
