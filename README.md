@@ -40,11 +40,14 @@ yo rznode
 
 ## Usage
 When running the generator there are currently several options
-1. Create a new service
-2. Add a new module (for routing and logic)
-3. Add a unit test
-4. Add a client docker file
-5. Create a docker compose file for entire project
+1. Create a new express Typescript Node service
+2. Create a new Api Gateway express Typescript Node service
+3. Add a new module to service (adds a controller and service files under a folder)
+4. Add a unit test to a service (using Mocha)
+5. Add a client app docker file (multistage docker file for building Angular and React and hosting in Nginx)
+6. Create a docker compose file for entire project
+7. Generate a swagger file for the Api Gateway service
+8. Generate a global package.json script for installing and transpiling the entire project in single command
 
 ### New service
 A new folder will be created containing everything you need to start a new service including.
@@ -55,6 +58,16 @@ A new folder will be created containing everything you need to start a new servi
 5. A jenkins file
 6. A basic swagger file
 >The code is written in typescript so make sure to compile using tsc before running the service
+
+To generate a new service:
+1. in terminal cd to the root services folder 
+2. run: yo rznode and select 'New Node service'
+3. translile - cd to the new created service and run 'tsc' to make sure it compiles
+4. .env file will contain the PORT env var. Change the value to your services unique port number
+5. test by running:
+```
+node .
+```
 
 ### New Api Gateway service
 The Api Gateway service is an implementation based on **http-express-proxy** that enables to create an api gateway service.
@@ -179,10 +192,16 @@ This will only create swagger paths that are not already defined in swagger.json
 
 
 ### New Module
-Adding a new module will create a folder by the module name and 2 classes. One for defining the routes and the second for defining a service containing the buisness logic.
+Adding a new module will create a folder by the module name and 2 classes. One for defining the routes and the second for defining a service that should contain the business logic.
 
-> When using the generator to generate a new route it is required to manually add the exported router method from the generated route
-> file into the server.ts inside method: setRoutes()
+To generate the module:
+1. in terminal cd to the root folder of your service (e.g. servers/servicea)
+2. run: yo rznode and select 'New Module'
+3. A new folder was added with the name of you module containing 2 new files
+   1. <module>.route.ts
+   2. <module>.service.ts
+
+> NOTE When using the generator to generate a new route it is required to manually add the exported router method from the generated route into the server.ts inside method: setRoutes()
 
 ### New unit test
 A test file will be added to the test folder.
@@ -204,6 +223,59 @@ In order to debug in vscode add the following to the launch.json:
     "internalConsoleOptions": "openOnSessionStart"
 },
 ```
+
+### Add a client app docker file
+Client applications written with Angular or React are packed using web pack prior to release. 
+You are required to host the applications with a web server in order to serve the static pages.
+**RZNODE** will generate a multistage docker file that will first create the packed static files and will then copy the result to smaller docker image with Nginx that will host the static files.
+
+To generate the docker:
+1. in terminal cd to the root folder of your client app
+2. run: yo rznode and select 'Client Dockerfile' 
+3. A new 'Dockerfile' was added to your project. Follow the instruction in the dockerfile in order to build the image
+
+### Create a docker compose file for the project 
+Assuming your project is build in the following structure:
+```
+clients
+		-<your client app>
+servers
+	- gateway service
+	- server a
+	- server b
+```
+You can generate a docker compose yaml file that will contain all the services and client apps
+
+To generate the docker compose file:
+1. in terminal cd to the root folder of your solution (folder containing servers and clients apps)
+2. run: yo rznode and select 'Create Docker Compose file' 
+3. Review the generated file to validate that it is correct and then run 'docker-compose build' 
+
+### Generate a global package.json script
+When your solution structure is as following:
+```
+clients
+		-<your client app>
+servers
+	- gateway service
+	- server a
+	- server b
+```
+and you have multiple services and one or more client, it is possible to generate a global 'package.json' scripts that will enable to run npm install and transpile using tsc all of the solution in single click.
+
+To generate the scripts:
+1. in terminal cd to the root folder of your solution (folder containing servers and clients apps)
+2. if you do not have a package.json in your root folder add one by running:
+```
+npm init -y
+```
+3. run: yo rznode and select 'Global package json scripts' 
+4. Open the package.json and validate that the scripts were build
+5. Test by running
+```
+npm run install:all
+```
+
 
 ### Swagger
 Swagger is supported in service and a basic swagger.json file is added inside the project
