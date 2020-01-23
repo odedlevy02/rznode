@@ -202,13 +202,13 @@ function doesPathExistInSwagger(swagger: any, path: string, method: string) {
 }
 
 function loadRoutesConfig(rootPath) {
+    let source = path.join(rootPath, "routesConfig")
     try {
-        let source = path.join(rootPath, "routesConfig")
         let rConfig = require(source)
         let routesConfig = rConfig.routesConfig
         return routesConfig;
     } catch (err) {
-        console.log("routesConfig.js not found in this folder ", __dirname)
+        console.log("routesConfig.js not found in this folder ", rootPath)
         return null;
     }
 }
@@ -219,7 +219,7 @@ function loadSwaggerJson(rootPath) {
         let fileContent = readFileSync(source)
         return JSON.parse(<any>fileContent);
     } else {
-        console.log("swagger.json file does not exist in this folder ", __dirname)
+        console.log("swagger.json file does not exist in this folder ", rootPath)
         return null;
     }
 }
