@@ -19,6 +19,11 @@ export function getUploadFileProxyMethod(host: IHostConfig, route: ISingleRouteC
         //build url from route
         let url = route.target ? `${host.host}${route.target}` : `${host.host}${route.source}`
         //pipe request to new url after appending headers
-        req.pipe(origRequest({ url, headers })).pipe(res);
+        let pipeRes = req.pipe(origRequest({ url, headers }))
+        pipeRes.on('error', function (err) {
+            console.error(`getUploadFileProxyMethod: error while piping file upload request, Error message: ${err.message}`)
+        })
+
+        pipeRes.pipe(res)
     }
 }
