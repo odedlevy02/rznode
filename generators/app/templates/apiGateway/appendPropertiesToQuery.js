@@ -29,7 +29,11 @@ function createPropArrayFromAppendData(req, propsAppend: IRouteAppendToQueryConf
             if (prop.appendToArray) {
                 propValue = [propValue]
             }
-            appendStrings.push(`${prop.queryParamName}=${JSON.stringify(propValue)}`)
+            if(typeof propValue =="string" || typeof propValue =="number" ){
+                appendStrings.push(`${prop.queryParamName}=${propValue}`)
+            }else{
+                appendStrings.push(`${prop.queryParamName}=${JSON.stringify(propValue)}`)
+            }
         }
     })
     return appendStrings;

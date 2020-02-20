@@ -4,7 +4,7 @@ import {  getDockerServices } from "../generators/app/generators/docker-compose/
 
 
 describe("docker compose gen tests",()=>{
-    it("should get folders containing Dockerfiles",()=>{
+    it.skip("should get folders containing Dockerfiles",()=>{
         let source = "C:/Temp/Workshop/Workshop1";
         let res = getDockerServices(source)  
         console.log(res);
