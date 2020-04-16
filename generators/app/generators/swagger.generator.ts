@@ -71,7 +71,7 @@ function getSwaggerParamFromInput(method: string, input: any, expressPath: strin
         } else { //if query params then create an array of items based on keys in object
             Object.keys(input).forEach(key => {
                 let param = getQueryParam(key, input[key])
-                if (param) { 
+                if (param) {
                     paramsResult.push(param)
                 }
             })
@@ -110,21 +110,13 @@ function getQueryParam(keyName: string, keyValue) {
         name: keyName,
     }
     if (keyValue) {
-        let type = null;
-        switch (typeof keyValue) {
-            case "number":
-                type = "number";
-                break;
-            default:
-                type = "string"
-                break;
-        }
+        let type = typeof keyValue;
         //anything that is not a number - stringify it
-        if (type != "number") {
+        if (type != "number" && type != "string") {
             keyValue = JSON.stringify(keyValue);
         }
         if (type != null) {
-            param["example"] = keyValue;
+            param["default"] = keyValue;
             param["type"] = type
 
         }
@@ -194,7 +186,6 @@ function doesPathExistInSwagger(swagger: any, path: string, method: string) {
     let expressToSwaggerPath = convertExpressPathToSwaggerPath(path);
     let swaggerPath = Object.keys(swagger.paths).filter(swaggerPath => swaggerPath == expressToSwaggerPath)
     if (swaggerPath && swaggerPath.length > 0 && swagger.paths[swaggerPath[0]][method]) {
-
         return true;
     } else {
         return false;
