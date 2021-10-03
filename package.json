@@ -1,6 +1,6 @@
 {
   "name": "generator-rznode",
-  "version": "4.7.0",
+  "version": "4.8.1",
   "description": "Create node typescript microservices with routes and tests generator ready to be dockerized",
   "homepage": "",
   "author": {
@@ -18,20 +18,19 @@
     "yeoman-generator"
   ],
   "devDependencies": {
-    "yeoman-test": "^1.7.0",
-    "yeoman-assert": "^3.1.0",
-    "coveralls": "^3.0.5",
-    "eslint": "^6.0.1",
-    "prettier": "^1.18.2",
-    "husky": "^3.0.1",
-    "lint-staged": "^9.2.0",
-    "eslint-config-prettier": "^6.0.0",
-    "eslint-plugin-prettier": "^3.1.0",
-    "eslint-config-xo": "^0.26.0",
-    "jest": "^24.8.0",
     "@types/node": "^12.7.2",
     "@types/sinon": "^7.0.13",
-    "@types/yeoman-generator": "^3.1.4"
+    "@types/yeoman-generator": "^3.1.4",
+    "coveralls": "^3.0.5",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-xo": "^0.26.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "jest": "^24.8.0",
+    "lint-staged": "^9.2.0",
+    "prettier": "^1.18.2",
+    "yeoman-assert": "^3.1.0",
+    "yeoman-test": "^1.7.0"
   },
   "engines": {
     "npm": ">= 4.0.0"

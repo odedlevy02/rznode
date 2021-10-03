@@ -6,6 +6,7 @@ import * as swaggerUi from "swagger-ui-express"
 import * as cors from "cors"
 import {existsSync,readFileSync} from "fs"
 import { IRoutesConfig } from "./apiGateway/IRoutesConfig";
+import { generateSwagger } from './apiGateway/swagger.generator';
 import { ApiGatewayRouteBuilder } from "./apiGateway/apiGatewayRouteBuilder";
 
 export class Server {
@@ -20,6 +21,10 @@ export class Server {
         this.app.use(compression());
         this.app.use(cors())
 
+    }
+
+    autoGenerateSwagger(){
+        generateSwagger()
     }
 
     public setSwagger = () => {

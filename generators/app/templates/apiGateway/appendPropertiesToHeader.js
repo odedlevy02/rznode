@@ -1,5 +1,6 @@
 import { IRouteAppendToHeaderConfig } from "./IRoutesConfig";
 import * as objectPath from "object-path";
+/* istanbul ignore file */
 export function appendPropertiesToHeader(appendToHeaderProps: IRouteAppendToHeaderConfig[]) {
     return (proxyReqOpts, srcReq) => {
         //set the default content type to json if not defined otherwise
@@ -12,7 +13,9 @@ export function appendPropertiesToHeader(appendToHeaderProps: IRouteAppendToHead
             appendToHeaderProps.forEach(prop => {
                 if (prop.reqPath && prop.headerKey) {
                     let propValue = objectPath.get(srcReq, prop.reqPath);
-                    proxyReqOpts.headers[prop.headerKey] = propValue
+                    if (propValue) {
+                        proxyReqOpts.headers[prop.headerKey] = propValue
+                    }
                 }
             })
         }

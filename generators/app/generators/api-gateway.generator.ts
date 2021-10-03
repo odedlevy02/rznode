@@ -37,6 +37,9 @@ export function generateApiGatewayServer(generator) {
     generator.templatePath(`apiGateway/uploadFileProxyMethod.js`),
     generator.destinationPath(`${projnameParamCase}/apiGateway/uploadFileProxyMethod.ts`));
   generator.fs.copy(
+    generator.templatePath(`apiGateway/swagger.generator.js`),
+    generator.destinationPath(`${projnameParamCase}/apiGateway/swagger.generator.ts`));
+  generator.fs.copy(
     generator.templatePath(`_tsconfig.json`),
     generator.destinationPath(`${projnameParamCase}/tsconfig.json`));
   generator.fs.copy(
@@ -61,8 +64,8 @@ export function generateApiGatewayServer(generator) {
     generator.templatePath(`.dockerignore`),
     generator.destinationPath(`${projnameParamCase}/.dockerignore`));
   generator.fs.copyTpl(
-    generator.templatePath(`apiGateway/_swagger.json`),
-    generator.destinationPath(`${projnameParamCase}/swagger.json`), {
+    generator.templatePath(`apiGateway/_swagger.static.json`),
+    generator.destinationPath(`${projnameParamCase}/swagger.static.json`), {
     header: sentenceCase(projnameParamCase)
   });
   generator.fs.copyTpl(
@@ -80,6 +83,6 @@ function installDependencies(generator) {
   fs.mkdirSync(newprojLocation)
   //change the working directory before install so that npm will find the package.json file created and add node modules in correct location
   process.chdir(newprojLocation);
-  generator.npmInstall(["body-parser", "compression", "dotenv", "express", "dotenv-display", "swagger-ui-express", "object-path", "express-http-proxy", "cors","request"], { save: true })
+  generator.npmInstall(["body-parser", "compression", "dotenv", "express", "dotenv-display", "swagger-ui-express", "object-path", "express-http-proxy", "cors", "request","to-json-schema"], { save: true })
   generator.npmInstall(["@types/express", "@types/node", "chai", "mocha", "sinon", "@types/sinon", "@types/mocha", "chalk"], { "save-dev": true })
 }

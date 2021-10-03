@@ -13,6 +13,7 @@ import { Server } from "./server";
 const server = new Server();
 
 server.setRoutesFromConfig(routesConfig);
+server.autoGenerateSwagger();
 server.setCustomRoutes();
 // server.setStaticFolders();
 server.setDynamicSwagger();

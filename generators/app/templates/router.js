@@ -22,7 +22,7 @@ class <%=modulename%>Router{
       res.status(200).send(result)
     } catch (err) {
       let error = serviceErrorReduce(err);
-      console.log("Error in sample: ", error)
+      console.error("Error in sample: ", error)
       res.status(500).send({ message: error })
     }
   }

@@ -49,18 +49,20 @@ export class ApiGatewayRouteBuilder {
         }
     }
 
-    //Middleware can be defined per each path in route or in the entire route
-    //if defined in path - even when empty array - return path middleware
-    //if not in path and in route - return that
-    //otherwise return empty
+    //Middleware can be defined per each path (route) in route or in the entire route (host)
     private getMiddlewaresInRoutes(host: IHostConfig, route: ISingleRouteConfig) {
-        if (route.middlewares) {
-            return route.middlewares
-        } else if (host.middlewares) {
-            return host.middlewares
-        } else {
+        if (!host.middlewares && !route.middlewares) {
             return null;
         }
+
+        const middlewares = [];
+        if (host.middlewares) {
+            middlewares.push(...host.middlewares);
+        }
+        if (route.middlewares) {
+            middlewares.push(...route.middlewares);
+        }
+        return middlewares;
     }
 
     //uses express http proxy or in special cases uses a different proxy for file uploads
@@ -87,7 +89,7 @@ export class ApiGatewayRouteBuilder {
         console.log("Error in server: ", err)
         next(err);
     }
-
+    
     responseDecoratorErrorLogger(proxyRes, proxyResData, userReq, userRes) {
         if (proxyRes.statusCode == 500) {
             let data = proxyResData.toString('utf8');
