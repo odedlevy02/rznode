@@ -1,4 +1,4 @@
-# generator-tsnode 
+# generator-rznode 
 The ultimate framework for creating Nodejs microservices written in typescript.
 
 The general architecture for microservices is to have a single service as an Api Gateway.

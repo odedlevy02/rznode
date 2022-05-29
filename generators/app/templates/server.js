@@ -1,6 +1,5 @@
 import * as express from "express";
 import * as http from "http";
-import * as bodyParser from "body-parser"
 import * as compression from "compression"
 import * as swaggerUi from "swagger-ui-express"
 import { logRouteCalls } from './helpers/addSupportForLogs';
@@ -13,8 +12,8 @@ export class Server {
   constructor() {
     this.app = express();
     this.app.use(compression());
-    this.app.use(bodyParser.json()); // support json encoded bodies
-    this.app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+    this.app.use(express.json({ limit: '100mb' })); // support json encoded bodies
+    this.app.use(express.urlencoded({ extended: true ,limit: '100mb' })); // support encoded bodies
     this.app.use(logRouteCalls());
     this.port = process.env.PORT || this.port;
 
