@@ -14,6 +14,12 @@ export function generateNodeFiles(generator) {
     generator.templatePath(`serviceErrorReducer.js`),
     generator.destinationPath(`${projnameParamCase}/helpers/serviceErrorReducer.ts`));
   generator.fs.copy(
+    generator.templatePath(`addSupportForLogs.js`),
+    generator.destinationPath(`${projnameParamCase}/helpers/addSupportForLogs.ts`));
+  generator.fs.copy(
+    generator.templatePath(`timerHelper.js`),
+    generator.destinationPath(`${projnameParamCase}/helpers/timerHelper.ts`));
+  generator.fs.copy(
     generator.templatePath(`_tsconfig.json`),
     generator.destinationPath(`${projnameParamCase}/tsconfig.json`));
   generator.fs.copy(

@@ -6,4 +6,4 @@ coverage
 npm-debug.log
 .idea
 .idea/*
-!templates/**
+!generators/app/templates/*

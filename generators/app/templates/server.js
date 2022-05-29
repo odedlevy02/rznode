@@ -3,6 +3,7 @@ import * as http from "http";
 import * as bodyParser from "body-parser"
 import * as compression from "compression"
 import * as swaggerUi from "swagger-ui-express"
+import { logRouteCalls } from './helpers/addSupportForLogs';
 import {existsSync,readFileSync} from "fs"
 
 export class Server {
@@ -14,7 +15,7 @@ export class Server {
     this.app.use(compression());
     this.app.use(bodyParser.json()); // support json encoded bodies
     this.app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-
+    this.app.use(logRouteCalls());
     this.port = process.env.PORT || this.port;
 
   }
