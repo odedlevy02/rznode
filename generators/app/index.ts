@@ -43,6 +43,14 @@ module.exports = class extends Generator {
         message: "What is the name of your new node service?"
       }, {
         when: (response => {
+          return response.gentype == "nodeservice"
+        }),
+        type: "input",
+        name: "includeTypeorm",
+        message: "Do you want to add typeorm? [y/n]"
+      },
+      {
+        when: (response => {
           return response.gentype == "apigatewayservice"
         }),
         type: "input",
@@ -56,6 +64,13 @@ module.exports = class extends Generator {
         name: "modulename",
         message: "What is name of the new module?"
       }, {
+        when: (response => {
+          return response.gentype == "module"
+        }),
+        type: "input",
+        name: "entityName",
+        message: "Do you want a crud module based on an entity? [Insert entity name or leave empty]"
+      },{
         when: (response => {
           return response.gentype == "unittest"
         }),

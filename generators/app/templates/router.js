@@ -1,7 +1,7 @@
 import {Router} from "express";
 import * as express from "express";
 import {<%=modulename%>Service} from "./<%=modulenameLower%>.service" 
-import { serviceErrorReduce } from "../helpers/serviceErrorReducer";
+import { serviceErrorReduce } from "../../helpers/serviceErrorReducer";
 
 class <%=modulename%>Router{
 

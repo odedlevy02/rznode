@@ -21,7 +21,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}\\generators\\index.js",
+            "program": "${workspaceFolder}/generators/app/index.js",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
