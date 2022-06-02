@@ -47,10 +47,10 @@ export function generateModule(generator: Generator) {
         const swaggerPath = "./swagger.json"
         const swagger = generator.fs.readJSON(swaggerPath)
         //get all and create swagger
-        const getAllCreate = getAllCreateSwagger(modulenameLower, entityNamePascal, entityNameCamel,entityNameCamelPlural)
+        const getAllCreate = getAllCreateSwagger(modulenameLower, entityNameCamel,entityNamePascalPlural)
         swagger.paths[getAllCreate.propName] = getAllCreate.path
         //get and delete by id
-        const getAndDeleteById = getAndDeleteByIdSwagger(modulenameLower, entityNamePascal, entityNameCamel,entityNameCamelPlural)
+        const getAndDeleteById = getAndDeleteByIdSwagger(modulenameLower, entityNameCamel,entityNamePascalPlural)
         swagger.paths[getAndDeleteById.propName] = getAndDeleteById.path
 
         generator.fs.delete(swaggerPath)
@@ -99,13 +99,13 @@ function addRouteToServerFile(generator, modulenameLower) {
     generator.fs.write("server.ts", updatedContent)
 }
 
-function getAllCreateSwagger(modulenameLower, entityNamePascal, entityNameCamel,entityNameCamelPlural): { propName, path } {
+function getAllCreateSwagger(modulenameLower, entityNameCamel,entityNamePascalPlural): { propName, path } {
     const path = {
         "get": {
             "tags": [
-                `${entityNameCamelPlural}`
+                `${entityNamePascalPlural}`
             ],
-            "summary": `Get all ${entityNameCamelPlural}`,
+            "summary": `Get all ${entityNamePascalPlural}`,
             "parameters": [
                 {
                     "in": "query",
@@ -114,13 +114,13 @@ function getAllCreateSwagger(modulenameLower, entityNamePascal, entityNameCamel,
             ],
             "responses": {
                 "200": {
-                    "description": `list of ${entityNameCamelPlural}`
+                    "description": `list of ${entityNamePascalPlural}`
                 }
             }
         },
         "post": {
             "tags": [
-                `${entityNamePascal}`
+                `${entityNamePascalPlural}`
             ],
             "summary": `save a ${entityNameCamel}  (create or update)`,
             "parameters": [
@@ -148,11 +148,11 @@ function getAllCreateSwagger(modulenameLower, entityNamePascal, entityNameCamel,
     return { path, propName: `/${modulenameLower}` };
 }
 
-function getAndDeleteByIdSwagger(modulenameLower, entityNamePascal, entityNameCamel,entityNameCamelPlural): { propName, path } {
+function getAndDeleteByIdSwagger(modulenameLower, entityNameCamel,entityNamePascalPlural): { propName, path } {
     const path = {
         "get": {
             "tags": [
-                `${entityNameCamelPlural}`
+                `${entityNamePascalPlural}`
             ],
             "summary": `Get ${entityNameCamel} by id`,
             "parameters": [
@@ -169,7 +169,7 @@ function getAndDeleteByIdSwagger(modulenameLower, entityNamePascal, entityNameCa
         },
         "delete": {
             "tags": [
-                `${entityNamePascal}`
+                `${entityNamePascalPlural}`
             ],
             "summary": `delete ${entityNameCamel} by id`,
             "parameters": [
