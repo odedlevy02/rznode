@@ -1,5 +1,5 @@
 import { startTimer, stopTimer } from './timerHelper';
-
+/* istanbul ignore file */
 //Middleware for registering to all routes and logging status and time
 //All logic is inline since needed usage of closures
 export function logRouteCalls() {

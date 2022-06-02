@@ -1,4 +1,4 @@
-
+/* istanbul ignore file */
 //a class for extracting the response from an http request
 //Modify this logic according to your needs
 export const serviceErrorReduce=(err)=>{

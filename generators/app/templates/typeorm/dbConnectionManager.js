@@ -1,7 +1,7 @@
 
 import { DataSource, DataSourceOptions } from "typeorm"
 import { rootFolder } from "../rootFolder";
-
+/* istanbul ignore file */
 export let AppDataStore: DataSource = null
 
 
