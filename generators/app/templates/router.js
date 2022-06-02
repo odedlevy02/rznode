@@ -29,4 +29,4 @@ class <%=modulename%>Router{
 }
 
 export const <%=modulenameLower%>Router= new <%=modulename%>Router().router;
-//Note - add to server.ts method setRoutes:  this.app.use("/<%=modulenameLower%>",<%=modulenameLower%>Router);
+//Note - validate that -  this.app.use("/<%=modulenameLower%>",<%=modulenameLower%>Router); - was added to server.ts in method setRoutes
