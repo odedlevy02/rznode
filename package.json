@@ -1,6 +1,6 @@
 {
   "name": "generator-rznode",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Create node typescript microservices with routes and tests generator ready to be dockerized",
   "homepage": "",
   "author": {
@@ -37,10 +37,12 @@
   },
   "dependencies": {
     "@types/mocha": "^5.2.7",
+    "@types/pluralize": "^0.0.29",
     "chalk": "^2.1.0",
     "change-case": "^3.1.0",
     "json2yaml": "^1.1.0",
     "mocha": "^6.2.0",
+    "pluralize": "^8.0.0",
     "sinon": "^7.4.2",
     "to-json-schema": "^0.2.3",
     "yeoman-generator": "^2.0.1",

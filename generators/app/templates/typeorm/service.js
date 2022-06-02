@@ -3,10 +3,10 @@ import { <%=entityClassName%> } from "../../entities/<%=entityNameCamel%>.entity
 
 export class <%=moduleServiceName%>{
 
-    async getAll<%=entityNamePascal%>(limit){
+    async getAll<%=entityNamePascalPlural%>(limit){
         const repo = await AppDataStore.getRepository(<%=entityClassName%>)
-        const <%=entityNameCamel%>  = await repo.find({take:limit})
-        return <%=entityNameCamel%> 
+        const <%=entityNameCamelPlural%>  = await repo.find({take:limit})
+        return <%=entityNameCamelPlural%> 
     }
     async get<%=entityNamePascal%>ById(id){
         const repo = AppDataStore.getRepository(<%=entityClassName%>)

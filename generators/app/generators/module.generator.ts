@@ -1,4 +1,5 @@
 import { camelCase, paramCase, pascalCase, sentenceCase, snakeCase } from 'change-case'
+import * as  pluralize from "pluralize"
 const chalk = require('chalk');
 import * as Generator from "yeoman-generator"
 export function generateModule(generator: Generator) {
@@ -23,8 +24,10 @@ export function generateModule(generator: Generator) {
 
     } else {
         const entityNameCamel = camelCase(entityName) //myGame
+        const entityNameCamelPlural = pluralize(entityNameCamel) //myGames
         const entityNameSnake = snakeCase(entityName) //my_game
         const entityNamePascal = pascalCase(entityName) //MyGame
+        const entityNamePascalPlural = pluralize(entityNamePascal) //MyGame
         const entityClassName = `${entityNamePascal}Entity`
         generator.fs.copyTpl(
             generator.templatePath(`typeorm/baseEntity.js`),
@@ -34,20 +37,20 @@ export function generateModule(generator: Generator) {
         generator.fs.copyTpl(
             generator.templatePath(`typeorm/router.js`),
             generator.destinationPath(`${baseRoutesFolderName}/${modulenameLower}.router.ts`), {
-            modulename, modulenameLower, moduleServiceName, entityNameCamel, entityNameSnake, entityNamePascal, entityClassName
+            modulename, modulenameLower, moduleServiceName, entityNameCamel, entityNameSnake, entityNamePascal, entityClassName,entityNameCamelPlural,entityNamePascalPlural
         });
         generator.fs.copyTpl(
             generator.templatePath(`typeorm/service.js`),
             generator.destinationPath(`${baseRoutesFolderName}/${modulenameLower}.service.ts`), {
-            modulename, modulenameLower, moduleServiceName, entityNameCamel, entityNameSnake, entityNamePascal, entityClassName
+            modulename, modulenameLower, moduleServiceName, entityNameCamel, entityNameSnake, entityNamePascal, entityClassName,entityNameCamelPlural,entityNamePascalPlural
         });
         const swaggerPath = "./swagger.json"
         const swagger = generator.fs.readJSON(swaggerPath)
         //get all and create swagger
-        const getAllCreate = getAllCreateSwagger(modulenameLower, entityNamePascal, entityNameCamel)
+        const getAllCreate = getAllCreateSwagger(modulenameLower, entityNamePascal, entityNameCamel,entityNameCamelPlural)
         swagger.paths[getAllCreate.propName] = getAllCreate.path
         //get and delete by id
-        const getAndDeleteById = getAndDeleteByIdSwagger(modulenameLower, entityNamePascal, entityNameCamel)
+        const getAndDeleteById = getAndDeleteByIdSwagger(modulenameLower, entityNamePascal, entityNameCamel,entityNameCamelPlural)
         swagger.paths[getAndDeleteById.propName] = getAndDeleteById.path
 
         generator.fs.delete(swaggerPath)
@@ -96,13 +99,13 @@ function addRouteToServerFile(generator, modulenameLower) {
     generator.fs.write("server.ts", updatedContent)
 }
 
-function getAllCreateSwagger(modulenameLower, entityNamePascal, entityNameCamel): { propName, path } {
+function getAllCreateSwagger(modulenameLower, entityNamePascal, entityNameCamel,entityNameCamelPlural): { propName, path } {
     const path = {
         "get": {
             "tags": [
-                `${entityNamePascal}`
+                `${entityNameCamelPlural}`
             ],
-            "summary": `Get all ${entityNameCamel}`,
+            "summary": `Get all ${entityNameCamelPlural}`,
             "parameters": [
                 {
                     "in": "query",
@@ -111,7 +114,7 @@ function getAllCreateSwagger(modulenameLower, entityNamePascal, entityNameCamel)
             ],
             "responses": {
                 "200": {
-                    "description": `list of ${entityNameCamel}`
+                    "description": `list of ${entityNameCamelPlural}`
                 }
             }
         },
@@ -145,11 +148,11 @@ function getAllCreateSwagger(modulenameLower, entityNamePascal, entityNameCamel)
     return { path, propName: `/${modulenameLower}` };
 }
 
-function getAndDeleteByIdSwagger(modulenameLower, entityNamePascal, entityNameCamel): { propName, path } {
+function getAndDeleteByIdSwagger(modulenameLower, entityNamePascal, entityNameCamel,entityNameCamelPlural): { propName, path } {
     const path = {
         "get": {
             "tags": [
-                `${entityNamePascal}`
+                `${entityNameCamelPlural}`
             ],
             "summary": `Get ${entityNameCamel} by id`,
             "parameters": [

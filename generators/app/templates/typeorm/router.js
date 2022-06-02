@@ -13,20 +13,20 @@ class <%=modulename%>Router{
   }
 
   private createRoutes() {
-    this.router.get("/", this.getAll<%=entityNamePascal%>);
+    this.router.get("/", this.getAll<%=entityNamePascalPlural%>);
     this.router.get("/:id", this.get<%=entityNamePascal%>ById);
     this.router.post("/", this.save<%=entityNamePascal%>);
     this.router.delete("/:id", this.delete<%=entityNamePascal%>ById);
   }
 
-  getAll<%=entityNamePascal%>=async (req,res)=>{
+  getAll<%=entityNamePascalPlural%>=async (req,res)=>{
     try {
       const {limit} = req.query
-      let result = await new <%=moduleServiceName%>().getAll<%=entityNamePascal%>(limit)
+      let result = await new <%=moduleServiceName%>().getAll<%=entityNamePascalPlural%>(limit)
       res.status(200).send(result)
     } catch (err) {
       let error = serviceErrorReduce(err);
-      console.error("Error in getAll<%=entityNamePascal%>: ", error)
+      console.error("Error in getAll<%=entityNamePascalPlural%>: ", error)
       res.status(500).send({ message: error })
     }
   }
