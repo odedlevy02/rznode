@@ -17,6 +17,7 @@ Rznode contains the following features:
 6. If you follow the structure of clients and server folders it will generate the docker-compose file with environment params and correct service referencing
 7. Generate a client docker file (for angular and react) that has a multistage build that takes the compiled output and runs it in Nginx
 8. Add Prometheus counters that can be used for service measurements
+9. Create a route exposing a domain entity for typeorm. That means that you get all the CRUD apis, service logic and swagger with a single click
 
 
 This is a huge time saver for all the pluming that is done over and over for each new project and each new service.
@@ -50,6 +51,7 @@ When running the generator there are currently several options
 8. Generate a global package.json script for installing and transpiling the entire project in single command
 
 ### New service
+When creating a service you are asked if you intend on using typeorm. If you reply with a yes then you will also get all the basic support for typeorm including a basic db manager and support for in memory db.
 A new folder will be created containing everything you need to start a new service including.
 1. index.ts - the starting point of the app
 2. A server.ts file containing the logic for running an express web server
@@ -62,12 +64,36 @@ A new folder will be created containing everything you need to start a new servi
 To generate a new service:
 1. in terminal cd to the root services folder 
 2. run: yo rznode and select 'New Node service'
-3. translile - cd to the new created service and run 'tsc' to make sure it compiles
+3. transpile - cd to the new created service and run 'tsc' to make sure it compiles
 4. .env file will contain the PORT env var. Change the value to your services unique port number
 5. test by running:
 ```
 node .
 ```
+### New Module
+Adding a new module will create a folder by the module name and 2 classes. One for defining the routes and the second for defining a service that should contain the business logic.
+If you have created a typeorm supporting service then you can also decide to create a basic entity and the route and service class will support the basic CRUD functionality for that entity
+
+To generate the module:
+1. in terminal cd to the root folder of your service (e.g. servers/servicea)
+2. run: yo rznode and select 'New Module'
+3. A new folder located under /routes folder is added with the name of you module containing 2 new files
+   1. <module>.route.ts
+   2. <module>.service.ts
+
+> NOTE When using the generator to generate a new route it is required to manually add the exported router method from the generated route into the server.ts inside method: setRoutes()
+
+If you have selected to add a domain (entity) during this process then 
+1. A new typeorm entity with some basic fields will be added under folder /entities.
+2. The routes and service will support CRUD functionality for that entity including
+* Get all 
+* Get by id
+* Save for creating and updating an entity
+* Delete by id
+
+3. The list of methods will also be added to swagger
+
+The only thing you need to do is add some fields to the entity, update the swagger and you are good to go.
 
 ### New Api Gateway service
 The Api Gateway service is an implementation based on **http-express-proxy** that enables to create an api gateway service.
@@ -143,7 +169,7 @@ Here is a sample of routes:
 
 }
 ```
-#### Generating swagger.json from routes
+#### Generating swagger.json from routes in Api Gateway
 Since there is a config for defining routes it is also possible to enrich the routes config so that it will contain enough information to generate swagger.json paths
 
 To support auto generate of swagger it is possible to add to each route the following fields:
@@ -191,17 +217,6 @@ Once completed run yo rznode and select 'generate swagger in Api gateway'
 This will only create swagger paths that are not already defined in swagger.json paths.therefore you can modify the files and not worry about overriding the modifications
 
 
-### New Module
-Adding a new module will create a folder by the module name and 2 classes. One for defining the routes and the second for defining a service that should contain the business logic.
-
-To generate the module:
-1. in terminal cd to the root folder of your service (e.g. servers/servicea)
-2. run: yo rznode and select 'New Module'
-3. A new folder was added with the name of you module containing 2 new files
-   1. <module>.route.ts
-   2. <module>.service.ts
-
-> NOTE When using the generator to generate a new route it is required to manually add the exported router method from the generated route into the server.ts inside method: setRoutes()
 
 ### New unit test
 A test file will be added to the test folder.

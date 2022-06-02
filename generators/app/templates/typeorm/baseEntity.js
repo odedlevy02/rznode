@@ -4,6 +4,8 @@ import {Entity, Column, PrimaryGeneratedColumn,CreateDateColumn, UpdateDateColum
 export class <%=entityClassName%> {
     @PrimaryGeneratedColumn()
     id: number;
+    @Column()
+    name:string
     @CreateDateColumn()
     created:Date
     @UpdateDateColumn()
