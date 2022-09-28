@@ -1,10 +1,4 @@
 import * as Generator from "yeoman-generator"
-import * as path from "path"
-import * as fs from "fs"
-const chalk = require('chalk');
-const yosay = require('yosay');
-//camelCase: someParamName, pascalCase: SomeParamName, paramCase: some-param-name, snakeCase: some_param_name
-import { camelCase, paramCase, pascalCase, sentenceCase, snakeCase } from 'change-case'
 import { generateClientDockerFile } from "./generators/client-docker.generator";
 import { generateCounter } from "./generators/counter.generator";
 import { generateUnitTest } from "./generators/unittest.generator";
@@ -14,6 +8,7 @@ import { generateDockerCompose } from "./generators/docker-compose/docker-compos
 import { generateApiGatewayServer } from "./generators/api-gateway.generator";
 import { buildPackageJsonScripts } from "./generators/global-package-json.generator";
 import { generateSwagger } from "./generators/swagger.generator";
+import { generateHelmCharts } from "./generators/helmCharts.generator";
 
 module.exports = class extends Generator {
   prompting() {
@@ -32,7 +27,8 @@ module.exports = class extends Generator {
           { name: "Generate swagger in Api Gateway", value: "swaggerGenerator" },
           { name: "Prometheus counter", value: "counter" },
           { name: "Create Docker Compose file", value: "dockerCompose" },
-          { name: "Client Dockerfile", value: "clientDocker" }
+          { name: "Client Dockerfile", value: "clientDocker" },
+          { name: "Helm charts", value: "helmcharts" }
         ]
       }, {
         when: (response => {
@@ -70,7 +66,7 @@ module.exports = class extends Generator {
         type: "input",
         name: "entityName",
         message: "Do you want a crud module based on an entity? [Insert entity name or leave empty]"
-      },{
+      }, {
         when: (response => {
           return response.gentype == "unittest"
         }),
@@ -100,7 +96,16 @@ module.exports = class extends Generator {
         type: "confirm",
         name: "confirmGlobalPackageJson",
         message: "This feature will overwrite your global package.json scripts content. Do you want to continue?"
+      },
+      {
+        when: (response => {
+          return response.gentype == "helmcharts"
+        }),
+        type: "input",
+        name: "projectName",
+        message: "What project name (will replace to lower with '-' as separator)?"
       }
+
     ];
 
     return this.prompt(prompts).then(props => {
@@ -140,6 +145,9 @@ module.exports = class extends Generator {
         break;
       case "swaggerGenerator":
         generateSwagger(this.destinationRoot());
+        break;
+      case "helmcharts":
+        generateHelmCharts(this);
         break;
     }
 

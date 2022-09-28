@@ -1,0 +1,144 @@
+{{- if .Values.deployment.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "<%=projectNameHyphen%>.fullname" . }}
+  labels:
+    {{- include "<%=projectNameHyphen%>.labels" . | nindent 4 }}
+  annotations:
+  {{- with .Values.deployment.annotations }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.deployment.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "<%=projectNameHyphen%>.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- with .Values.deployment.podAnnotations }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- if .Values.configMaps.enabled }}
+      {{- range .Values.configMaps.configs }}
+        "checksum/{{ .name }}": {{ $.Files.Get (print .filePath) | sha256sum  }}
+      {{- end }}
+    {{- end }}
+    {{- if .Values.secrets.enabled }}
+      {{- range .Values.secrets.secrets }}
+        "checksum/{{ .name }}": {{ $.Files.Get (print .filePath) | sha256sum  }}
+      {{- end }}
+    {{- end }}
+      labels:
+        {{- include "<%=projectNameHyphen%>.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "<%=projectNameHyphen%>.serviceAccountName" . }}
+      securityContext:
+      {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: {{ .Chart.Name }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ required ".Values.image.repository is required" .Values.image.repository }}:{{ required ".Values.image.tag is required" .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{-  with .Values.deployment.command }}
+        command:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.deployment.args }}
+        args:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.env }}
+        env:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        {{- range .Values.volumes }}
+        - name: {{ .name }}
+          mountPath: {{ .mountPath }}
+          readOnly: {{ .readOnly | default true }}
+          {{- if .subPath }}
+          subPath: {{ .subPath }}
+          {{- end }}
+        {{- end }}
+        {{ if .Values.healthcheck.enabled | default false }}
+        livenessProbe:
+          {{ with .Values.healthcheck.liveness }}
+          {{- toYaml . | nindent 10 }}
+          {{ end }}
+          periodSeconds: 60
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          {{ with .Values.healthcheck.readiness }}
+          {{- toYaml . | nindent 10 }}
+          {{ end }}
+          periodSeconds: 60
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        {{ end }}
+        ports:
+        {{- range $name, $config := .Values.ports }}
+        {{- if $config }}
+        - name: {{ $name | quote }}
+          containerPort: {{ $config.port }}
+          {{- if $config.hostPort }}
+          hostPort: {{ $config.hostPort }}
+          {{- end }}
+          {{- if $config.hostIP }}
+          hostIP: {{ $config.hostIP }}
+          {{- end }}
+          protocol: {{ default "TCP" $config.protocol | quote }}
+        {{- end }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      {{- range .Values.volumes }}
+      - name: {{ .name }}
+        {{- if eq .type "secret" }}
+        secret:
+          secretName: {{ .name }}
+          defaultMode: {{ .defaultMode | default 420 }}
+          {{- if .items }}
+          items:
+          {{- range $k, $v := .items }}
+          - key: {{ .key }}
+            path: {{ .path }}
+          {{- end }}
+          {{- end }}
+        {{- else if eq .type "configMap" }}
+        configMap:
+          name: {{ .name }}
+          {{- if .items }}
+          items:
+          {{- range $k, $v := .items }}
+          - key: {{ .key }}
+            path: {{ .path }}
+          {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end -}}

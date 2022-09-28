@@ -1,0 +1,156 @@
+image:
+  repository: "us.gcr.io/loyal-world-659/pl-<%=projectNameHyphen%>"
+  #tag: 
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+
+######## DEPLOYMENT SETTING #############
+
+deployment:
+  enabled: true
+  # Number of pods of the deployment
+  replicas: 1
+  # Additional deployment annotations (e.g. for jaeger-operator sidecar injection)
+  annotations: {}
+  # Additional pod annotations (e.g. for mesh injection or prometheus scraping)
+  podAnnotations:
+  # Additional containers (e.g. for metric offloading sidecars)
+  additionalContainers: []
+  # Additional initContainers (e.g. for setting file permission as shown below)
+  initContainers: []
+  # dnsPolicy: ClusterFirstWithHostNet
+  command: []
+  args: []
+
+
+# Configure ports
+ports:
+  http:
+    name: http
+    port: 8000
+    expose: true
+    exposedPort: 8000
+    protocol: TCP
+
+healthcheck:
+  enabled: true
+  readiness:
+    httpGet:
+      path: /health
+      port: 8000
+  liveness:
+    httpGet:
+      path: /health
+      port: 8000
+
+#Container Environemnt Variables
+env:
+  - name: OTEL_EXPORTER_JAEGER_AGENT_HOST
+    valueFrom:
+      fieldRef:
+        fieldPath: status.hostIP
+  - name: OTEL_BSP_MAX_EXPORT_BATCH_SIZE
+    value: "5"
+
+secrets:
+  enabled: true
+  secrets:
+  - name: <%=projectNameHyphen%>-env
+    filePath: configuration/env.rend
+
+
+
+configMaps:
+  enabled: false
+  #configs:
+  #- name: my-service-env
+  #  filePath: configuration/env.rend
+
+volumes:
+- name: <%=projectNameHyphen%>-env
+  type: secret
+  mountPath: /placer/server/.env
+  subPath: .env
+  items:
+  - key: <%=projectNameHyphen%>-env
+    path: .env
+
+labels:
+   app: <%=projectNameHyphen%>
+   stack: <%=projectNameHyphen%>
+   coralogix_app: <%=projectNameHyphen%>
+   coralogix_subsystem: <%=projectNameHyphen%>-service
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "512Mi"
+  limits:
+    cpu: "1000m"
+    memory: "1024Mi"
+
+podAnnotations: {}
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+podSecurityContext: {}
+#  fsGroup: 65532
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+######## DEPLOYMENT SETTING - END #############
+
+######## HPA SETTING #############
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 40
+
+######## HPA SETTING - END #############
+
+######## SERVICE + INGRESS Settings #############
+service:
+  enabled: true
+  type: ClusterIP
+  protocol:
+  annotations: {}
+  externalPort: 8000
+  internalPort: 8000
+
+
+ingress:
+  traefik:
+    enabled: false
+
+######## SERVICE + INGRESS Settings - END #############
+
+
+
+
+

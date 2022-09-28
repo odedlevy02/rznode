@@ -1,0 +1,23 @@
+labels:
+  env: staging
+
+ingress:
+  traefik:
+    enabled: true
+    ingressClass: 'traefik'
+    annotations: {}
+    entryPoints: # possible values [web, websecure, admin]
+    - websecure
+    routeRules:
+    - match: Host(`staging-<%=projectNameHyphen%>.placer.team`)
+      priority: 50
+      scheme: http
+    tls:
+      store:
+        name: default
+
+dns:
+  record:
+    enabled: true
+    lb_record: guru-l4-staging-ingress.placer.team
+    service_record_name: staging-<%=projectNameHyphen%>.placer.team
