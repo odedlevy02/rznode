@@ -9,6 +9,7 @@ import { generateApiGatewayServer } from "./generators/api-gateway.generator";
 import { buildPackageJsonScripts } from "./generators/global-package-json.generator";
 import { generateSwagger } from "./generators/swagger.generator";
 import { generateHelmCharts } from "./generators/helmCharts.generator";
+import { generateJaeger } from "./generators/jaeger.generator";
 
 module.exports = class extends Generator {
   prompting() {
@@ -28,7 +29,8 @@ module.exports = class extends Generator {
           { name: "Prometheus counter", value: "counter" },
           { name: "Create Docker Compose file", value: "dockerCompose" },
           { name: "Client Dockerfile", value: "clientDocker" },
-          { name: "Helm charts", value: "helmcharts" }
+          { name: "Helm charts", value: "helmcharts" },
+          { name: "Jaeger support", value: "jaeger" }
         ]
       }, {
         when: (response => {
@@ -148,6 +150,9 @@ module.exports = class extends Generator {
         break;
       case "helmcharts":
         generateHelmCharts(this);
+        break;
+      case "jaeger":
+        generateJaeger(this);
         break;
     }
 
