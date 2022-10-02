@@ -40,7 +40,8 @@ function installDependencies(generator) {
         "@opentelemetry/exporter-jaeger",
         "opentelemetry-instrumentation-express",
         "@opentelemetry/resources",
-        "@opentelemetry/semantic-conventions"
+        "@opentelemetry/semantic-conventions",
+        "@opentelemetry/instrumentation-http"
 
     ], { save: true })
   }

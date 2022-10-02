@@ -5,6 +5,7 @@ import { JaegerExporter } from "@opentelemetry/exporter-jaeger";
 import  { ExpressInstrumentation }from "opentelemetry-instrumentation-express";
 import  { Resource } from "@opentelemetry/resources";
 import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
+import {HttpInstrumentation} from "@opentelemetry/instrumentation-http"
 import { env } from "process";
 
 export class Tracer{
@@ -23,6 +24,7 @@ export class Tracer{
     provider.register();
     registerInstrumentations({
         instrumentations: [
+          new HttpInstrumentation(),
           new ExpressInstrumentation({requestHook: (span, requestInfo) => {
             //collect req body
             let rawBody = '';
