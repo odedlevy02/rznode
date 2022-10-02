@@ -16,14 +16,15 @@ class <%=modulename%>Router{
     this.router.get("/sample", this.sample);
   }
 
-  sample=async (req,res)=>{
+  sample=async (req,res,next)=>{
     try {
       let result = null //await new <%=modulename%>Service().sample()
       res.status(200).send(result)
     } catch (err) {
       let error = serviceErrorReduce(err);
       console.error("Error in sample: ", error)
-      res.status(500).send({ message: error })
+      // err.status = 400
+      next(err)
     }
   }
 }

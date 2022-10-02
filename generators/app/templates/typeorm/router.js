@@ -19,7 +19,7 @@ class <%=modulename%>Router{
     this.router.delete("/:id", this.delete<%=entityNamePascal%>ById);
   }
 
-  getAll<%=entityNamePascalPlural%>=async (req,res)=>{
+  getAll<%=entityNamePascalPlural%>=async (req,res,next)=>{
     try {
       const {limit} = req.query
       let result = await new <%=moduleServiceName%>().getAll<%=entityNamePascalPlural%>(limit)
@@ -27,7 +27,8 @@ class <%=modulename%>Router{
     } catch (err) {
       let error = serviceErrorReduce(err);
       console.error("Error in getAll<%=entityNamePascalPlural%>: ", error)
-      res.status(500).send({ message: error })
+      // err.status = 400
+      next(err)
     }
   }
 
