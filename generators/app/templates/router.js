@@ -24,6 +24,7 @@ class <%=modulename%>Router{
       let error = serviceErrorReduce(err);
       console.error("Error in sample: ", error)
       // err.status = 400
+      // err.message = error
       next(err)
     }
   }

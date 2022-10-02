@@ -28,6 +28,7 @@ class <%=modulename%>Router{
       let error = serviceErrorReduce(err);
       console.error("Error in getAll<%=entityNamePascalPlural%>: ", error)
       // err.status = 400
+      // err.message = error
       next(err)
     }
   }
@@ -40,7 +41,9 @@ class <%=modulename%>Router{
     } catch (err) {
       let error = serviceErrorReduce(err);
       console.error("Error in get<%=entityNamePascal%>ById: ", error)
-      res.status(500).send({ message: error })
+      // err.status = 400
+      // err.message = error
+      next(err)
     }
   }
 
@@ -52,7 +55,9 @@ class <%=modulename%>Router{
     } catch (err) {
       let error = serviceErrorReduce(err);
       console.error("Error in create<%=entityNamePascal%>: ", error)
-      res.status(500).send({ message: error })
+      // err.status = 400
+      // err.message = error
+      next(err)
     }
   }
 
@@ -65,7 +70,9 @@ class <%=modulename%>Router{
     } catch (err) {
       let error = serviceErrorReduce(err);
       console.error("Error in delete<%=entityNamePascal%>ById: ", error)
-      res.status(500).send({ message: error })
+      // err.status = 400
+      // err.message = error
+      next(err)
     }
   }
 

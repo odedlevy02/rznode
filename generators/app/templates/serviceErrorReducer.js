@@ -5,7 +5,7 @@ export const serviceErrorReduce=(err)=>{
     if(err.response && err.response.body && err.response.body.error && err.response.body.error.message) {
         return err.response.body.error.message;
     }
-    else if(err.response && err.response.body && err.response.body.error) {
+    else if(err.response && err.response.body && err.response.body.error && Object.keys(err.response.body.error).length) {
         return err.response.body.error;
     }
     else if(err.response && err.response.body && err.response.body.message){

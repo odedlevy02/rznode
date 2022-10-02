@@ -82,4 +82,9 @@ export function generateHelmCharts(generator) {
         generator.destinationPath(`${baseHelmFolderName}/configuration/staging/values.yaml`), {
         projectNameHyphen,projectNameUnderscore
     });
+    generator.fs.copyTpl(
+        generator.templatePath(`helmCharts/readme.md`),
+        generator.destinationPath(`${baseHelmFolderName}/readme.md`), {
+        projectNameHyphen,projectNameUnderscore
+    });
 }
