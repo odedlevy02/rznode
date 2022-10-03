@@ -33,7 +33,7 @@ class <%=modulename%>Router{
     }
   }
 
-  get<%=entityNamePascal%>ById=async (req,res)=>{
+  get<%=entityNamePascal%>ById=async (req,res,next)=>{
     try {
       const {id} = req.params
       let result = await new <%=moduleServiceName%>().get<%=entityNamePascal%>ById(id)
@@ -47,7 +47,7 @@ class <%=modulename%>Router{
     }
   }
 
-  save<%=entityNamePascal%>=async (req,res)=>{
+  save<%=entityNamePascal%>=async (req,res,next)=>{
     try {
       const <%=entityNameCamel%> = req.body
       let result = await new <%=moduleServiceName%>().save<%=entityNamePascal%>(<%=entityNameCamel%>)
@@ -62,7 +62,7 @@ class <%=modulename%>Router{
   }
 
 
-  delete<%=entityNamePascal%>ById=async (req,res)=>{
+  delete<%=entityNamePascal%>ById=async (req,res,next)=>{
     try {
       const <%=entityNameCamel%> = req.params
       let result = await new <%=moduleServiceName%>().delete<%=entityNamePascal%>ById(<%=entityNameCamel%>)
